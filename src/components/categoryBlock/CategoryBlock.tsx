@@ -3,15 +3,10 @@ import {useInView} from "react-intersection-observer";
 import {useDispatch, useSelector} from "react-redux";
 import {setActiveSection} from "@/components/topBar/topBarSlice";
 import {useEffect} from "react";
+import Link from "next/link";
 
 
-const CategoryBlock = ({id, categoryName}) => {
-    const pizzaItem = {
-        pizzaName: "Сырный цыпленок",
-        ingridients: [ "Цыпленок", "моцарелла", "сыры чеддер и пармезан", "сырный соус", "томаты", "соус альфредо", "чеснок"],
-        imageSrc: "/pizzaa.png",
-        price: 395
-    }
+const CategoryBlock = ({id, category}) => {
     const { ref, inView } = useInView({
         threshold: 0.7,
     });
@@ -24,13 +19,19 @@ const CategoryBlock = ({id, categoryName}) => {
             dispatch(setActiveSection(id));
         }
     }, [inView])
+
     return (
         <>
-            <h2 className="text-2xl font-bold" id={id}>{categoryName}</h2>
+            <h2 className="text-2xl font-bold" id={id}>{category.name}</h2>
+
             <div ref={ref} className='grid grid-cols-3 gap-[50px] mt-4 mb-20'>
-                <ProductCard imageSrc={pizzaItem.imageSrc} pizzaName={pizzaItem.pizzaName} ingridients={pizzaItem.ingridients} price={pizzaItem.price}/>
-                <ProductCard imageSrc={pizzaItem.imageSrc} pizzaName={pizzaItem.pizzaName} ingridients={pizzaItem.ingridients} price={pizzaItem.price}/>
-                <ProductCard imageSrc={pizzaItem.imageSrc} pizzaName={pizzaItem.pizzaName} ingridients={pizzaItem.ingridients} price={pizzaItem.price}/>
+                {
+                    category.products.map(item => (
+                       <Link key={item.id}  href={`/product/${item.id}`}>
+                           <ProductCard  imageSrc={item.imageUrl} pizzaName={item.name} ingridients={item.ingridients} price={item.productVariations[0].price}/>
+                       </Link>
+                    ))
+                }
             </div>
         </>
     )

@@ -6,13 +6,18 @@ import {Container} from "@/components/container/Container";
 import {setActiveSection, setAllSections, selectAll} from "@/components/topBar/topBarSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
+import {useCategoryAPI} from "@/services/categoryAPI";
+import Spinner from "@/components/spinner/Spinner";
 
 
-const TopBar = ({categoriesToSetState}) => {
+const TopBar = () => {
     const dispatch = useDispatch()
-
+    const {getAllCategory, loading, error} = useCategoryAPI()
+    const categories = useSelector(state => selectAll(state))
     useEffect(() => {
-        dispatch(setAllSections(categoriesToSetState))
+        if(categories.length === 0){
+            getAllCategory().then(res => dispatch(setAllSections(res.data)))
+        }
     }, [])
 
     const onClick = (event, id) => {
@@ -33,25 +38,37 @@ const TopBar = ({categoriesToSetState}) => {
         }
     }
 
-    const categories = useSelector(state => selectAll(state))
+    //const categories = useSelector(state => selectAll(state))
     const activeSection = useSelector(state => state.topBarReducer.activeSection)
+
+    const setContent = (loading, error) => {
+        if(loading){
+            return <Spinner/>
+        }else if(error){
+            return <div>Error</div>
+        }else if(!error && !loading){
+            return (
+                categories.map((item, i) => {
+                    return(
+                        <a
+                            key={i}
+                            href={`#${item.id}`}
+                            onClick={(e) => onClick(e, item.id)}
+                            className={clsx("flex items-center font-bold h-11 rounded-2xl px-5", item.id === activeSection && 'bg-white shadow-md shadow-gray-200 text-primary')}>
+                            <button>{item.name}</button>
+                        </a>
+                    )
+
+                })
+            )
+        }
+    }
 
     return(
         <Container className="py-4 sticky top-0 flex justify-between items-end z-10 bg-white/80 backdrop-blur-md ">
             <div className=" inline-flex gap-1 bg-gray-50 rounded-2xl z-100">
                 {
-                    categories.map((item, i) => {
-                       return(
-                           <a
-                               key={i}
-                               href={`#${item.id}`}
-                               onClick={(e) => onClick(e, item.id)}
-                               className={clsx("flex items-center font-bold h-11 rounded-2xl px-5", item.id === activeSection && 'bg-white shadow-md shadow-gray-200 text-primary')}>
-                               <button>{item.categoryName}</button>
-                           </a>
-                       )
-
-                    })
+                    setContent(loading, error)
                 }
             </div>
             <div className="inline-flex items-center px-2 bg-gray-50 rounded-2xl gap-2 cursor-pointer">

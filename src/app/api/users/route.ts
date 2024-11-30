@@ -7,12 +7,12 @@ export async function GET() {
 
     return NextResponse.json(users)
 }
-export function POST() {
-    const user = await prisma.user.create({
-        fullName: "Padla",
-        email : "Bydlo",
-        password: "Pablo"
-    })
-
-    return NextResponse.json(user)
-}
+// export function POST() {
+//     const user = await prisma.user.create({
+//         fullName: "Padla",
+//         email : "Bydlo",
+//         password: "Pablo"
+//     })
+//
+//     return NextResponse.json(user)
+// }

@@ -2,7 +2,7 @@ import {createEntityAdapter, createSlice} from '@reduxjs/toolkit'
 
 const topBarAdapter = createEntityAdapter();
 const initialState = topBarAdapter.getInitialState({
-    activeSection: "pizza"
+    activeSection: 1
 })
 
 const topBarSlice = createSlice({

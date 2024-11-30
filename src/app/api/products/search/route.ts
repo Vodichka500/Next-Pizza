@@ -11,9 +11,12 @@ export async function GET(req: NextRequest) {
                 mode: 'insensitive',
             }
         },
-        take: 10,
+        take: 5,
+        include: {
+            ingridients: true,
+            productVariations: true
+        }
     })
-
 
     return NextResponse.json(products);
 }

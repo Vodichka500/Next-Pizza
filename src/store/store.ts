@@ -2,9 +2,10 @@ import {configureStore} from "@reduxjs/toolkit";
 import headerReducer from "@/components/header/headerSlice";
 import topBarReducer from "@/components/topBar/topBarSlice"
 import priceFilterReducer from "@/components/priceFilter/priceFilterSlice";
+import filterSidebarReducer from "@/components/filterSidebar/filterSidebarSlice";
 
 const store = configureStore({
-    reducer: {headerReducer, topBarReducer, priceFilterReducer},
+    reducer: {headerReducer, topBarReducer, priceFilterReducer, filterSidebarReducer},
     devTools: process.env.NODE_ENV !== 'production'
 })
 

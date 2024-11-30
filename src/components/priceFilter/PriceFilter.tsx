@@ -5,21 +5,30 @@ import {RussianRuble} from "lucide-react";
 import RangeSlider from "@/components/priceFilter/rangeSlider";
 import {setCurrentFromPrice, setCurrentToPrice} from "@/components/priceFilter/priceFilterSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
+import useFilters from "@/hooks/useFilters";
+
 
 
 const PriceFilter = () => {
-  const dispatch = useDispatch();
-  const minPrice = useSelector(state => state.priceFilterReducer.minPrice)
-  const maxPrice = useSelector(state => state.priceFilterReducer.maxPrice)
-  const currentFromPrice = useSelector(state => state.priceFilterReducer.currentFromPrice);
-  const currentToPrice =  useSelector(state => state.priceFilterReducer.currentToPrice);
+    const dispatch = useDispatch();
+    const minPrice = useSelector(state => state.priceFilterReducer.minPrice)
+    const maxPrice = useSelector(state => state.priceFilterReducer.maxPrice)
+    const currentFromPrice = useSelector(state => state.priceFilterReducer.currentFromPrice);
+    const currentToPrice =  useSelector(state => state.priceFilterReducer.currentToPrice);
 
-  const fromInputRef = useRef(null)
-  const toInputRef = useRef(null)
+    const fromInputRef = useRef(null)
+    const toInputRef = useRef(null)
 
 
-  const onFromInput = (e) => {
+    const query  = useFilters();
+    useEffect(() => {
+        query.currentFromPrice ? dispatch(setCurrentFromPrice(parseInt(query.currentFromPrice))) : null;
+        query.currentToPrice ? dispatch(setCurrentToPrice(parseInt(query.currentToPrice))) : null;
+
+    }, [dispatch]);
+
+    const onFromInput = (e) => {
         const inputValue = parseFloat(e.target.value)
 
         // -10, because value minGap = 10
@@ -33,7 +42,7 @@ const PriceFilter = () => {
             dispatch(setCurrentFromPrice(inputValue))
         }
 
-  }
+    }
 
     const onToInput = (e) => {
             const inputValue = parseFloat(e.target.value)
@@ -52,7 +61,7 @@ const PriceFilter = () => {
 
 
 
-  return (
+    return (
       <div className="py-8 border-b-2 border-b-gray-100 ">
           <h3 className="text-xl font-bold mb-5">Цена:</h3>
           <div className="inline-flex gap-4">
@@ -82,7 +91,7 @@ const PriceFilter = () => {
           <RangeSlider minGap={10} sliderMaxValue={maxPrice} sliderMinValue={minPrice}/>
 
       </div>
-  )
+    )
 }
 
 export default PriceFilter
