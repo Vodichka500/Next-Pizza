@@ -1,4 +1,9 @@
-import {BASE_URL, PRODUCTS_POPULAR_PATH, PRODUCTS_SEARCH_PATH} from "@/services/constants";
+import {
+    BASE_URL,
+    PRODUCTS_POPULAR_PATH,
+    PRODUCTS_SEARCH_ID_PATH,
+    PRODUCTS_SEARCH_NAME_PATH
+} from "@/services/constants";
 import {useAxiosGet} from "@/hooks/useAxios";
 
 export const useProductAPI = () => {
@@ -9,10 +14,14 @@ export const useProductAPI = () => {
        return response;
    }
    const getProductByName = async (name) => {
-       const response = request(BASE_URL+PRODUCTS_SEARCH_PATH, {params: {query: name}});
+       const response = request(BASE_URL+PRODUCTS_SEARCH_NAME_PATH, {params: {query: name}});
        return response;
    }
 
+    const getProductById = async (id) => {
+        const response = request(BASE_URL+PRODUCTS_SEARCH_ID_PATH, {params: {query: id}});
+        return response;
+    }
 
-   return{getPopularProducts,getProductByName, loading, error}
+   return{getPopularProducts,getProductByName,getProductById, loading, error}
 }

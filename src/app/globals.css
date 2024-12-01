@@ -11,6 +11,13 @@ body {
   font-family: Nunito,Arial, Helvetica, sans-serif;
 }
 
+.left-shadow {
+  @apply shadow-none; /* Reset any default shadows */
+  box-shadow: -3px 0 15px rgba(0, 0, 0, 0.2); /* Left shadow */
+}
+.dialog-content {
+  animation: none; /* Отключение анимации */
+}
 
 @layer base {
   :root {
