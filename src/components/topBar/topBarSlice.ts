@@ -10,7 +10,6 @@ const topBarSlice = createSlice({
     initialState,
     reducers: {
         setAllSections: (state, action) =>  {
-
             topBarAdapter.setAll(state, action.payload)
         },
         setActiveSection: (state, action) => {
