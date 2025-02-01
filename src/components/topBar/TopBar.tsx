@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
 import {useCategoryAPI} from "@/services/categoryAPI";
 import Spinner from "@/components/spinner/Spinner";
+import SkeletonTopBar from "@/components/topBar/SkeletonTopBar";
 
 
 const TopBar = () => {
@@ -43,7 +44,7 @@ const TopBar = () => {
 
     const setContent = (loading, error) => {
         if(loading){
-            return <Spinner/>
+            return <SkeletonTopBar/>
         }else if(error){
             return <div>Error</div>
         }else if(!error && !loading){

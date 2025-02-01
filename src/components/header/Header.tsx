@@ -10,6 +10,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {Container} from "@/components/container/Container";
 import {Button} from "@/components/ui/button";
 import SearchInput from "@/components/searchInput/SearchInput";
+import Cart from "@/components/cart/Cart";
 
 
 const Header = () => {
@@ -44,18 +45,20 @@ const Header = () => {
                             <DropdownMenuItem><LogOut/><span>Выйти</span></DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button className='relative group'>
-                        <b>{100} ₽</b>
-                        <span className="h-full w-[1px] bg-white/30 mx-3"/>
-                        <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
-                            <ShoppingCart size={16} className="relative" strokeWidth={2}/>
-                            <b>{3}</b>
-                        </div>
-                        <ArrowRight
-                            size={20}
-                            className="absolute right-5 transition duration-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
-                        />
-                    </Button>
+                    <Cart>
+                        <Button className='relative group'>
+                            <b>{100} ₽</b>
+                            <span className="h-full w-[1px] bg-white/30 mx-3"/>
+                            <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
+                                <ShoppingCart size={16} className="relative" strokeWidth={2}/>
+                                <b>{3}</b>
+                            </div>
+                            <ArrowRight
+                                size={20}
+                                className="absolute right-5 transition duration-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                            />
+                        </Button>
+                    </Cart>
                 </div>
             </div>
         </Container>

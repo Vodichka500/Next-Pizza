@@ -5,6 +5,7 @@ const PRODUCTS_SEARCH_NAME_PATH='/products/searchName'
 const PRODUCTS_SEARCH_ID_PATH='/products/searchId'
 const PRODUCTS_POPULAR_PATH='/products/popular'
 const CATEGORY_PATH = '/category'
+const CART_PATH = '/cart'
 
 export {
     BASE_URL,
@@ -13,5 +14,6 @@ export {
     PRODUCTS_SEARCH_NAME_PATH,
     PRODUCTS_POPULAR_PATH,
     CATEGORY_PATH,
-    PRODUCTS_SEARCH_ID_PATH
+    PRODUCTS_SEARCH_ID_PATH,
+    CART_PATH
 }

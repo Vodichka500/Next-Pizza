@@ -1,9 +1,11 @@
-import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+
 
 const filterSidebarAdapter = createEntityAdapter()
 const initialState = filterSidebarAdapter.getInitialState({
     criteria: ["Можно собирать", "Новинка"],
-    ingridients: ["Сырный соус", "Моцарелла", "Чеснок", "Солённые огурчики", "Красный лук", "Томаты"],
+    // ingridients: ["Сырный соус", "Моцарелла", "Чеснок", "Солённые огурчики", "Красный лук", "Томаты"],
+    ingridients: [],
     dough: ["Традиционное", "Тонкое"],
     sizes: ["20 см", "30 см", "40 см"],
 
@@ -28,7 +30,6 @@ const filterSidebarSlice = createSlice({
     reducers: {
         setActiveCriteria(state, action){
             state.activeCriteria = updateActiveFilter(state.activeCriteria, action.payload)
-
         },
         setActiveIngridients(state, action){
             state.activeIngridients = updateActiveFilter(state.activeIngridients, action.payload)
@@ -38,8 +39,11 @@ const filterSidebarSlice = createSlice({
         },
         setActiveSizes(state, action){
             state.activeSizes = updateActiveFilter(state.activeSizes, action.payload)
+        },
+        setIngridients(state, action){
+            state.ingridients = action.payload
         }
-    }
+    },
 })
 
 const {reducer, actions} = filterSidebarSlice
@@ -49,5 +53,6 @@ export const {
     setActiveIngridients,
     setActiveDough,
     setActiveSizes,
+    setIngridients
 } = actions
 export default reducer

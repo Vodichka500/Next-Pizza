@@ -4,10 +4,10 @@ const priceFilterAdapter = createEntityAdapter();
 
 
 const initialState = priceFilterAdapter.getInitialState({
-    maxPrice: 3000,
+    maxPrice: 600,
     minPrice: 112,
     currentFromPrice: 112,
-    currentToPrice: 3000
+    currentToPrice: 600
 
 })
 

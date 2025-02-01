@@ -25,3 +25,27 @@ export const useAxiosGet = () => {
     const clearError = useCallback(() => setError(false),[]);
     return {request, loading, error, clearError}
 }
+
+export const useAxiosPatch = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
+    const request = useCallback(async (url, options) => {
+        setLoading(true);
+        setError(false);
+        try {
+            const response = (await axios.patch(url, options));
+            setLoading(false)
+            console.log("useAxios.ts: ", response)
+            return response
+        } catch (e) {
+            console.error("useAxios.ts ERROR:",e)
+            setError(true)
+        } finally {
+            setLoading(false);
+        }
+
+    }, [])
+    const clearError = useCallback(() => setError(false),[]);
+    return {request, loading, error, clearError}
+}

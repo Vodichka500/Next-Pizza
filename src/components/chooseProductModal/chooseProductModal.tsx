@@ -8,10 +8,15 @@ import Spinner from "@/components/spinner/Spinner";
 import {VisuallyHidden} from "@radix-ui/react-visually-hidden";
 import useIngridientsAPI from "@/services/ingridientsAPI";
 import {useDispatch} from "react-redux";
-import {setIngridients, setProduct} from "@/components/chooseProductModal/chooseModalProductSlice";
+import {
+    setDoesNotExistMessage,
+    setIngridients,
+    setProduct
+} from "@/components/chooseProductModal/chooseModalProductSlice";
 import {useChooseModalProduct} from "@/hooks/useChooseModalProduct";
 import ModalProductItem from "@/components/modalProductItem/modalProductItem";
 import ModalPizzaItem from "@/components/modalPizzaItem/ModalPizzaItem";
+import ModalSkeleton from "@/components/modalSkeleton/ModalSkeleton";
 
 const ChooseProductModal = ({id, className}) => {
 
@@ -22,6 +27,7 @@ const ChooseProductModal = ({id, className}) => {
     const {product} = useChooseModalProduct()
 
     useEffect(() => {
+        dispatch(setProduct(null))
         getProductById(id)
             .then(res => dispatch(setProduct(res.data)))
         getAllIngridients()
@@ -30,10 +36,10 @@ const ChooseProductModal = ({id, className}) => {
 
     const setContent = (loading, error) => {
         if(loading && !error){
-            return <Spinner/>
+            return <ModalSkeleton/>
         }else if (!loading && error){
             return (<div>Error with loading product data [chooseProductModal.tsx]</div>)
-        } else if (!loading && !error){
+        } else if (!loading && !error && product){
             if(product?.productVariations[0].pizzaType){
                 // if(!selectedSize && !selectedDough){
                 //     adjustSelection(null, null);

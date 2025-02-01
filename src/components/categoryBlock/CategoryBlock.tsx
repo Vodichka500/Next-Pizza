@@ -20,6 +20,15 @@ const CategoryBlock = ({id, category}) => {
         }
     }, [inView])
 
+    // useEffect(() => {
+    //     console.log(category.products)
+    //     const items = []
+    //     category.products.forEach(item => {
+    //         items.push(item.name)
+    //     })
+    //     console.log(items.join(", "))
+    // }, [category]);
+
     return (
         <>
             <h2 className="text-2xl font-bold" id={id}>{category.name}</h2>

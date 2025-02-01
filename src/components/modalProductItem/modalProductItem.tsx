@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {RussianRuble} from "lucide-react";
+import Link from "next/link";
 
 
 
@@ -18,6 +19,7 @@ const modalProductItem = ({product}) => {
                   <Button className="max-w-sm  mt-6">Добавить в корзину за {product?.productVariations[0].price}
                       <RussianRuble/></Button>
               </div>
+
           </div>
       </div>
   )

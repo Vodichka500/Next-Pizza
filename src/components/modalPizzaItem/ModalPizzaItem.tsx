@@ -3,6 +3,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 import {
+    setDoesNotExistMessage,
     setPrice,
     setSelectedDough,
     setSelectedIngridients,
@@ -25,6 +26,7 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
+
         adjustSelection(null, null)
     }, []);
 
