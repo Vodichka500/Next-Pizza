@@ -11,9 +11,15 @@ import {Container} from "@/components/container/Container";
 import {Button} from "@/components/ui/button";
 import SearchInput from "@/components/searchInput/SearchInput";
 import Cart from "@/components/cart/Cart";
+import {useSelector} from "react-redux";
+
 
 
 const Header = () => {
+    const cart = useSelector(state => state.cartReduxReducer)
+    console.log("Total amount");
+    console.log(cart.cartRedux.totalAmount)
+
     return(
         <Container>
             <div className="flex justify-between items-center py-8 border-b-2 border-gray-100 ">
@@ -47,11 +53,11 @@ const Header = () => {
                     </DropdownMenu>
                     <Cart>
                         <Button className='relative group'>
-                            <b>{100} ₽</b>
+                            <b>{cart.cartRedux.totalAmount || 0} ₽</b>
                             <span className="h-full w-[1px] bg-white/30 mx-3"/>
                             <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
                                 <ShoppingCart size={16} className="relative" strokeWidth={2}/>
-                                <b>{3}</b>
+                                <b>{cart.cartRedux.cartItems?.length || 0}</b>
                             </div>
                             <ArrowRight
                                 size={20}

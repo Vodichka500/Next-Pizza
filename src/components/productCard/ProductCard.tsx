@@ -1,4 +1,5 @@
 import Image from "next/image";
+import {CopyPlus} from "lucide-react"
 
 interface productCard {
     imageSrc: string,
@@ -20,7 +21,7 @@ const ProductCard = ({imageSrc, pizzaName, ingridients, price}:productCard) => {
               <div className="text-lg">
                   от <span className="text-xl font-bold">{price} ₽</span>
               </div>
-              <div></div>
+              <div className="px-5 py-2 rounded-2xl bg-orange-100 text-primary flex gap-2"><CopyPlus size={22}/>Собрать</div>
           </div>
       </div>
   )

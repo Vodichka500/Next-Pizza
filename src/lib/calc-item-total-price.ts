@@ -1,5 +1,5 @@
 export function calcCartItemTotalPrice (item) {
-    const ingredientsPrice = item.ingredients.reduce((acc, ingredient) => acc + ingredient.price, 0);
+    const ingredientsPrice = item.ingridients.reduce((acc, ingredient) => acc + ingredient.price, 0);
 
-    return (ingredientsPrice + item.productItem.price) * item.quantity;
+    return (ingredientsPrice + item.productVariation.price) * item.quantity;
 };

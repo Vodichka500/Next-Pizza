@@ -4,9 +4,10 @@ import topBarReducer from "@/components/topBar/topBarSlice"
 import priceFilterReducer from "@/components/priceFilter/priceFilterSlice";
 import filterSidebarReducer from "@/components/filterSidebar/filterSidebarSlice";
 import chooseModalProductReducer from "@/components/chooseProductModal/chooseModalProductSlice";
+import cartReduxReducer from "@/components/cart/cartSlice";
 
 const store = configureStore({
-    reducer: {headerReducer, topBarReducer, priceFilterReducer, filterSidebarReducer, chooseModalProductReducer},
+    reducer: {headerReducer, topBarReducer, priceFilterReducer, filterSidebarReducer, chooseModalProductReducer, cartReduxReducer},
     devTools: process.env.NODE_ENV !== 'production'
 })
 

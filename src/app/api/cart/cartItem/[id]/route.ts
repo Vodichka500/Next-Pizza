@@ -4,7 +4,7 @@ import {updateCartTotalAmount} from "@/lib/update-cart-total-amount";
 
 export async function GET(req: NextRequest, {params}){
     const {id} = await params
-    const cartId = parseInt(id);
+    const cartItemId = parseInt(id);
     const token = req.cookies.get('token')?.value
 
     if (!token) {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, {params}){
 
     const cartItem = await prisma.cartItem.findFirst({
         where: {
-            cartId,
+            id: cartItemId,
         },
     });
 
@@ -21,7 +21,8 @@ export async function GET(req: NextRequest, {params}){
 }
 
 export async function PATCH(req: NextRequest, {params}){
-    const id = parseInt(params.id);
+    const {id} = await params
+    const cartItemId = parseInt(id);
     const data = (await req.json()) as {quantity: number}
     const token = req.cookies.get('token')?.value
 
@@ -31,7 +32,7 @@ export async function PATCH(req: NextRequest, {params}){
 
     const cartItem = await prisma.cartItem.findFirst({
         where: {
-            id,
+            id: cartItemId,
         },
     });
 
@@ -39,9 +40,9 @@ export async function PATCH(req: NextRequest, {params}){
         return NextResponse.json({ error: 'Cart item not found' });
     }
 
-    await prisma.cartItem.update({
+    const res = await prisma.cartItem.update({
         where: {
-            id,
+            id: cartItemId,
         },
         data: {
             quantity: data.quantity,

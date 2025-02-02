@@ -7,27 +7,24 @@ export async function updateCartTotalAmount(token) {
             token,
         },
         include: {
-            items: {
+            cartItems: {
                 orderBy: {
                     createdAt: 'desc',
                 },
                 include: {
-                    productItem: {
-                        include: {
-                            product: true,
-                        },
-                    },
-                    ingredients: true,
+                    productVariation: true,
+                    ingridients: true,
                 },
             },
         },
     });
 
+
     if (!userCart) {
         return;
     }
 
-    const totalAmount = userCart.items.reduce((acc, item) => {
+    const totalAmount = userCart.cartItems.reduce((acc, item) => {
         return acc + calcCartItemTotalPrice(item);
     }, 0);
 
@@ -37,21 +34,6 @@ export async function updateCartTotalAmount(token) {
         },
         data: {
             totalAmount,
-        },
-        include: {
-            items: {
-                orderBy: {
-                    createdAt: 'desc',
-                },
-                include: {
-                    productItem: {
-                        include: {
-                            product: true,
-                        },
-                    },
-                    ingredients: true,
-                },
-            },
         },
     });
 }

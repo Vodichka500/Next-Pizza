@@ -16,11 +16,12 @@ export async function GET(){
         include: {
             cartItems: {
                 include: {
-                    productVariation:{
+                    productVariation: {
                         include: {
                             product: true
                         }
-                    }
+                    },
+                    ingridients: true
                 }
             }
         }
