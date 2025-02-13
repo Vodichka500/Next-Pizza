@@ -9,5 +9,6 @@ declare global {
 }
 
 export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+// export const orderStatus =
 
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma

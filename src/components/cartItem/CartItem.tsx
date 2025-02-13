@@ -1,10 +1,36 @@
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
-import {usePatchCartItemAPI} from "@/services/cartAPI";
+import {useDeleteCartItemAPI, useGetCartAPI, usePatchCartItemAPI,} from "@/services/cartAPI";
 import {calcCartItemTotalPrice} from "@/lib/calc-item-total-price";
+import {Plus} from "lucide-react"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {useEffect} from "react";
+import {setCartRedux} from "@/components/cart/CartSlice";
+import {useDispatch} from "react-redux";
 
-const CartItem = ({id, url,productName, ingridients, quantity, price, setUpdateCart, cartItem}) => {
+const CartItem = ({id, url,productName, ingridients, quantity, price, updateCart,setUpdateCart, cartItem}) => {
+    const {getCart} = useGetCartAPI()
     const {patchCartItem, loading, error, clearError} = usePatchCartItemAPI()
+    const {deleteCartItem} = useDeleteCartItemAPI()
+
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        setUpdateCart(false)
+        getCart()
+            .then(res =>  dispatch(setCartRedux(res.data)))
+    }, [updateCart, dispatch]);
+
     const increaseQuantity = () => {
         patchCartItem(id, {quantity: quantity + 1})
             .then(res => console.log(res))
@@ -12,7 +38,6 @@ const CartItem = ({id, url,productName, ingridients, quantity, price, setUpdateC
             .catch(err => console.log(err))
         //setUpdateCart(true)
     }
-    console.log(cartItem)
 
     const decreaseQuantity = () => {
         if (quantity === 1) {
@@ -26,8 +51,16 @@ const CartItem = ({id, url,productName, ingridients, quantity, price, setUpdateC
         //setUpdateCart(true)
     }
 
+    const deleteItem = () => {
+        deleteCartItem(id)
+            .then(res => console.log(res))
+            .then(() => setUpdateCart(true))
+            .catch(err => console.log(err))
+
+    }
+
     return (
-        <div className="w-full bg-white py-5 px-2 mb-3">
+        <div className="relative w-full bg-white py-5 px-2 mb-3">
             <div className="grid grid-cols-5 grid-rows-1 gap-4">
                 <div className="col-span-2 flex justify-center items-start">
                     <Image className="w-[80%]"
@@ -51,6 +84,21 @@ const CartItem = ({id, url,productName, ingridients, quantity, price, setUpdateC
                     </div>
                 </div>
             </div>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <div className="absolute top-1 right-2 cursor-pointer" ><Plus
+                        className="rotate-45" size={20}/></div>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Вы уверены что хотите удалить этот продукт из корзины?</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                        <AlertDialogAction onClick={deleteItem} className="bg-primary">Удалить из корзины</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

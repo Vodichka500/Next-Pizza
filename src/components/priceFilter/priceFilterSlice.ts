@@ -7,8 +7,8 @@ const initialState = priceFilterAdapter.getInitialState({
     maxPrice: 600,
     minPrice: 112,
     currentFromPrice: 112,
-    currentToPrice: 600
-
+    currentToPrice: 600,
+    sortBy: "priceDesc" // priceAsc (min -> max), priceDesc (max -> min)
 })
 
 const priceFilterSlice = createSlice({
@@ -27,6 +27,9 @@ const priceFilterSlice = createSlice({
         setCurrentToPrice: (state, action) => {
             state.currentToPrice = action.payload
         },
+        setSortBy: (state, action) => {
+            state.sortBy = action.payload
+        }
     }
 })
 
@@ -35,7 +38,8 @@ export const {
     setMaxPrice,
     setMinPrice,
     setCurrentFromPrice,
-    setCurrentToPrice
+    setCurrentToPrice,
+    setSortBy
 } = actions
 
 export default reducer

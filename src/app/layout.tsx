@@ -1,7 +1,6 @@
 import "./globals.css";
 import {StoreProvider} from "@/store/StoreProvider";
 import {Nunito} from 'next/font/google'
-
 const nutino = Nunito({
     subsets: ['cyrillic'],
     variable: '--font-nunito',
@@ -11,6 +10,7 @@ const nutino = Nunito({
 
 
 export default function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
+
     return (
         <html lang="en" className={nutino.className}>
         <body className="relative">

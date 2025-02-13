@@ -3,6 +3,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 import {
+    clearSelectedIngridients,
     setDoesNotExistMessage,
     setPrice,
     setSelectedDough,
@@ -16,9 +17,12 @@ import {useChooseModalProduct} from "@/hooks/useChooseModalProduct";
 import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {usePostCartItemAPI} from "@/services/cartAPI";
+import {setCartRedux} from "@/components/cart/CartSlice";
+import toast, {Toaster} from "react-hot-toast";
 
 
 const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
+
     const {
         ingridients,
         product,
@@ -28,24 +32,27 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
         selectedSize,
         price
     } = useChooseModalProduct()
+
     const productSizes = [20, 30, 40];
     const productDough = [1, 2];
 
     const dispatch = useDispatch()
 
+
+
     useEffect(() => {
-        adjustSelection(null, null)
+        adjustSelection(null, null, true);
     }, []);
 
-    const adjustSelection = (size, dough) => {
+    const adjustSelection = (size, dough, firstOpen) => {
 
         // Проверяем доступность текущего выбора
         const isValid = product?.productVariations.some(variation =>
-            variation.size === size && variation.pizzaType === dough
-        );
+            variation.size === size && variation.pizzaType === dough)
 
+        console.log("Size: ", size, "Dough: ", dough, "SelectedSize: ", selectedSize, "SelectedDough: ", selectedDough, "isValid: ", isValid)
         if (!isValid) {
-            if (selectedSize && selectedDough) {
+            if (!firstOpen && selectedSize && selectedDough) {
                 dispatch(triggerMessage())
             }
             // Ищем альтернативы для выбранного размера
@@ -93,8 +100,14 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
             quantity: 1
         }
         postCartItem(data)
-            .then(response => {console.log(response); setAddedToCart(true)})
-            .catch(e => {console.error(e)})
+            .then(response => {
+                const {data} = response
+                dispatch(setCartRedux(data))
+                setAddedToCart(true)}
+            )
+            .then(() => toast.success("Добавлено в корзину"))
+            .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
+            .finally(() => dispatch(clearSelectedIngridients()))
     }
 
     return (
@@ -162,6 +175,7 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
                 className={clsx("absolute bottom-5 left-5 py-1 px-3 bg-red-300 rounded-2xl text-sm  delay-50 duration-300", doesNotExistMessage ? "opacity-100" : "opacity-0")}>
                 <MessageSquareWarning className="inline"/> К сожалению невозможно выбрать этот вариант.
             </div>
+            <Toaster />
         </div>
     )
 }

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 import {
+    clearSelectedIngridients,
     setPrice,
     setSelectedDough,
     setSelectedIngridients,
@@ -12,8 +13,11 @@ import {MessageSquareWarning, RussianRuble} from "lucide-react";
 import Spinner from "@/components/spinner/Spinner";
 import {Button} from "@/components/ui/button";
 import {useChooseModalProduct} from "@/hooks/useChooseModalProduct";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
+import {setCartRedux} from "@/components/cart/CartSlice";
+import {usePostCartItemAPI} from "@/services/cartAPI";
+import toast, {Toaster} from "react-hot-toast";
 
 
 
@@ -22,7 +26,25 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
     const productSizes = [20,30,40];
     const productDough = [1,2];
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch() // Не вынести случайно за пределы компонента
+
+    const {postCartItem, loading, error, clearError} = usePostCartItemAPI()
+    const [addedToCart, setAddedToCart] = useState(false)
+    const addProductToCart = () => {
+        const data = {
+            quantity: 1,
+            productVariationId: product.productVariations[0].id
+        }
+        postCartItem(data)
+            .then(response => {
+                const {data} = response
+                dispatch(setCartRedux(data))
+                setAddedToCart(true)}
+            )
+            .then(() => toast.success("Добавлено в корзину"))
+            .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
+            .finally(() => dispatch(clearSelectedIngridients()))
+    }
 
     useEffect(() => {
         adjustSelection(null, null)
@@ -125,11 +147,19 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
                         }
                     </div>
                 </div>
-                <Button className="max-w-sm relative left-1/2 translate-x-[-50%] mt-6">Добавить в корзину за {price}<RussianRuble/></Button>
+                <Button onClick={addProductToCart} disabled={addedToCart}  className="max-w-sm relative left-1/2 translate-x-[-50%] mt-6">
+                    {
+                        !loading && !error && !addedToCart && <>Добавить в корзину за {price}<RussianRuble/></> ||
+                        loading && !error && <Spinner/> ||
+                        error && !loading && "Произошла ошибка. Попробуйте позже" ||
+                        addedToCart && "Добавлено в корзину"
+                    }
+                </Button>
             </div>
             <div className={clsx("absolute bottom-5 left-5 py-1 px-3 bg-red-300 rounded-2xl text-sm  delay-50 duration-300", doesNotExistMessage ? "opacity-100" : "opacity-0")}>
                 <MessageSquareWarning className="inline"/> К сожалению невозможно выбрать этот вариант.
             </div>
+            <Toaster />
         </div>
     )
 }

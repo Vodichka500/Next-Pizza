@@ -3,7 +3,11 @@ import TopBar from "@/components/topBar/TopBar";
 import FilterSidebar from "@/components/filterSidebar/FilterSidebar";
 import MenuSection from "@/components/menuSection/MenuSection";
 
+
 export default function Home() {
+
+
+
     return (
         <div className="py-8 relative">
             <Container>

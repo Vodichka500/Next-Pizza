@@ -11,14 +11,13 @@ import {Container} from "@/components/container/Container";
 import {Button} from "@/components/ui/button";
 import SearchInput from "@/components/searchInput/SearchInput";
 import Cart from "@/components/cart/Cart";
+
 import {useSelector} from "react-redux";
 
 
 
-const Header = () => {
+const Header = ({isSearchVisible = true, isCartVisible = true}) => {
     const cart = useSelector(state => state.cartReduxReducer)
-    console.log("Total amount");
-    console.log(cart.cartRedux.totalAmount)
 
     return(
         <Container>
@@ -33,7 +32,7 @@ const Header = () => {
                     </div>
                 </Link>
 
-                <SearchInput/>
+                {isSearchVisible && <SearchInput/>}
 
                 <div className="flex gap-2">
                     <DropdownMenu>
@@ -41,7 +40,7 @@ const Header = () => {
                             "px-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background",
                             "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
                             "disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                            "border border-primary text-primary bg-transparent hover:bg-secondary"
+                            "border border-primary text-primary bg-transparent hover:bg-secondary p-2"
                         )}>
                             <User size={16}/>Профиль
                         </DropdownMenuTrigger>
@@ -51,20 +50,22 @@ const Header = () => {
                             <DropdownMenuItem><LogOut/><span>Выйти</span></DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Cart>
-                        <Button className='relative group'>
-                            <b>{cart.cartRedux.totalAmount || 0} ₽</b>
-                            <span className="h-full w-[1px] bg-white/30 mx-3"/>
-                            <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
-                                <ShoppingCart size={16} className="relative" strokeWidth={2}/>
-                                <b>{cart.cartRedux.cartItems?.length || 0}</b>
-                            </div>
-                            <ArrowRight
-                                size={20}
-                                className="absolute right-5 transition duration-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
-                            />
-                        </Button>
-                    </Cart>
+                    {isCartVisible && (
+                        <Cart>
+                            <Button className='relative group'>
+                                <b>{Math.round(cart.cartRedux?.totalAmount) || 0} ₽</b>
+                                <span className="h-full w-[1px] bg-white/30 mx-3"/>
+                                <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
+                                    <ShoppingCart size={16} className="relative" strokeWidth={2}/>
+                                    <b>{cart.cartRedux?.cartItems?.length || 0}</b>
+                                </div>
+                                <ArrowRight
+                                    size={20}
+                                    className="absolute right-5 transition duration-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
+                                />
+                            </Button>
+                        </Cart>
+                        )}
                 </div>
             </div>
         </Container>

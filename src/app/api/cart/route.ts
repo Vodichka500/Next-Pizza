@@ -1,7 +1,7 @@
 import {prisma} from "../../../../prisma/prisma-client";
 import {NextResponse} from "next/server";
 import {cookies} from "next/headers";
-
+import {v4 as uuidv4} from "uuid";
 export async function GET(){
     const token = (await cookies()).get("token")?.value
 
@@ -58,6 +58,7 @@ export async function GET(){
 //         return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
 //     }
 // }
+
 
 export async function PATCH(req: Request) {
     try {

@@ -2,7 +2,9 @@ import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 
 const CartAdapter = createEntityAdapter()
 const initialState = CartAdapter.getInitialState({
-    cartRedux: {}
+    cartRedux: {
+        cartItems: []
+    }
 })
 
 const CartSlice = createSlice({

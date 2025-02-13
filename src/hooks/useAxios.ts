@@ -12,7 +12,7 @@ export const useAxiosGet = () => {
         try {
             const response = (await axios.get(url, options));
             setLoading(false)
-            console.log("useAxios.ts: ", response)
+            // console.log("useAxios.ts: ", response)
             return response
         } catch (e) {
             console.error("useAxios.ts ERROR:",e)
@@ -36,7 +36,7 @@ export const useAxiosPatch = () => {
         try {
             const response = (await axios.patch(url, options));
             setLoading(false)
-            console.log("useAxios.ts: ", response)
+            // console.log("useAxios.ts: ", response)
             return response
         } catch (e) {
             console.error("useAxios.ts ERROR:",e)
@@ -60,7 +60,31 @@ export const useAxiosPost = () => {
         try {
             const response = (await axios.post(url, options));
             setLoading(false)
-            console.log("useAxios.ts: ", response)
+            // console.log("useAxios.ts: ", response)
+            return response
+        } catch (e) {
+            console.error("useAxios.ts ERROR:",e)
+            setError(true)
+        } finally {
+            setLoading(false);
+        }
+
+    }, [])
+    const clearError = useCallback(() => setError(false),[]);
+    return {request, loading, error, clearError}
+}
+
+export const useAxiosDelete = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
+    const request = useCallback(async (url, options) => {
+        setLoading(true);
+        setError(false);
+        try {
+            const response = (await axios.delete(url, options));
+            setLoading(false)
+            // console.log("useAxios.ts: ", response)
             return response
         } catch (e) {
             console.error("useAxios.ts ERROR:",e)

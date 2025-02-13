@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from "clsx";
-import {ArrowUpDown} from "lucide-react";
+import {ArrowUpDown, MoveDown, MoveUp} from "lucide-react";
 import {Container} from "@/components/container/Container";
 import {setActiveSection, setAllSections, selectAll} from "@/components/topBar/topBarSlice";
 import {useDispatch, useSelector} from "react-redux";
@@ -9,6 +9,21 @@ import {useEffect} from "react";
 import {useCategoryAPI} from "@/services/categoryAPI";
 import Spinner from "@/components/spinner/Spinner";
 import SkeletonTopBar from "@/components/topBar/SkeletonTopBar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {setSortBy} from "@/components/priceFilter/priceFilterSlice";
 
 
 const TopBar = () => {
@@ -65,6 +80,9 @@ const TopBar = () => {
         }
     }
 
+    const sortBy = useSelector(state => state.priceFilterReducer.sortBy)
+
+
     return(
         <Container className="py-4 sticky top-0 flex justify-between items-end z-10 bg-white/80 backdrop-blur-md ">
             <div className=" inline-flex gap-1 bg-gray-50 rounded-2xl z-100">
@@ -73,9 +91,27 @@ const TopBar = () => {
                 }
             </div>
             <div className="inline-flex items-center px-2 bg-gray-50 rounded-2xl gap-2 cursor-pointer">
-                <ArrowUpDown height={44} size={16}/>
-                <b className="text-lg">Сортировка:</b>
-                <b className="text-primary">Рейтинг</b>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <div className="flex gap-2 items-center">
+                            <ArrowUpDown height={44} size={16}/>
+                            <b className="text-lg">Сортировка:</b>
+                            <b className="text-primary">{sortBy === "priceAsc" ? "Цена (по возрастанию)" : "Цена (по убыванию)"} </b>
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem onClick={() => dispatch(setSortBy("priceDesc"))}>
+                                <span>Цена (по возрастанию)</span>
+                                <DropdownMenuShortcut><MoveUp /></DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => dispatch(setSortBy("priceAsc"))}>
+                                <span>Цена (по убыванию)</span>
+                                <DropdownMenuShortcut><MoveDown /></DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </Container>
     )

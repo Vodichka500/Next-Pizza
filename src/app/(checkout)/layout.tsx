@@ -4,19 +4,18 @@ import Header from "@/components/header/Header";
 import BackToTop from "@/components/backToTop/BackToTop";
 
 export const metadata: Metadata = {
-    title: "Next Pizza",
+    title: "Checkout",
     description: "Best pizza in next.js",
 };
 
 
 
-export default function MainLayout({children,modal}: Readonly<{ children: React.ReactNode; }>) {
+export default function CheckoutLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
-        <main>
+        <main className="">
             <BackToTop/>
-            <Header isCartVisible={true} isSearchVisible={true}/>
+            <Header isSearchVisible={false} isCartVisible={false}/>
             {children}
-            {modal}
         </main>
     );
 }

@@ -5,18 +5,30 @@ import {useSelector} from "react-redux";
 import {selectAll} from "@/components/topBar/topBarSlice";
 import SkeletonMenuSection from "@/components/menuSection/SkeletonMenuSection";
 import {useEffect} from "react";
-import {products} from "../../../prisma/constants";
 
 const MenuSection = () => {
     const categories = useSelector(state => selectAll(state))
     const priceFrom = useSelector(state => state.priceFilterReducer.currentFromPrice)
     const priceTo = useSelector(state => state.priceFilterReducer.currentToPrice)
 
+    const sortBy = useSelector(state => state.priceFilterReducer.sortBy)
+
     const activeCriteria = useSelector(state => state.filterSidebarReducer.activeCriteria)
     const activeIngridients = useSelector(state => state.filterSidebarReducer.activeIngridients)
     const activeDough = useSelector(state => state.filterSidebarReducer.activeDough)
     const activeSizes = useSelector(state => state.filterSidebarReducer.activeSizes)
 
+    const sortByPrice = (a, b) => {
+        const priceA = a.productVariations[0].price;
+        const priceB = b.productVariations[0].price;
+
+        if (sortBy === "priceAsc") {
+            return priceA - priceB;
+        } else if (sortBy === "priceDesc") {
+            return priceB - priceA;
+        }
+        return 0;
+    };
     const applyFilters = (categories) => {
         const filteredCategory = categories
             .map(category => ({
@@ -47,7 +59,7 @@ const MenuSection = () => {
 
                         return priceCondition && criteriaCondition && ingridientsCondition && doughCondition && sizeCondition;
                     }
-                )
+                ).sort(sortByPrice)
             }))
             .filter(category => category.products.length > 0); // исключаем категории без отфильтрованных продуктов
         return filteredCategory
@@ -58,11 +70,14 @@ const MenuSection = () => {
         applyFilters(categories)
     }, [categories]);
 
+
+
+
     return (
         <div className="w-full py-8 ml-12">
         {
             categories.length>0 ?
-                applyFilters(categories).map((item) => {
+                (applyFilters(categories)).map((item) => {
                     return(
                         <CategoryBlock key={item.id} id={item.id} category={item}/>
                     )

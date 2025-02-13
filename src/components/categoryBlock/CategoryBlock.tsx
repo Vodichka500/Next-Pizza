@@ -7,6 +7,8 @@ import Link from "next/link";
 
 
 const CategoryBlock = ({id, category}) => {
+
+
     const { ref, inView } = useInView({
         threshold: 0.7,
     });

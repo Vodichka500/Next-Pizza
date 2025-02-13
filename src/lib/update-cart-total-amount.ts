@@ -8,9 +8,6 @@ export async function updateCartTotalAmount(token) {
         },
         include: {
             cartItems: {
-                orderBy: {
-                    createdAt: 'desc',
-                },
                 include: {
                     productVariation: true,
                     ingridients: true,
@@ -35,5 +32,20 @@ export async function updateCartTotalAmount(token) {
         data: {
             totalAmount,
         },
+        include: {
+            cartItems: {
+                orderBy: {
+                    createdAt: 'asc',
+                },
+                include: {
+                    productVariation: {
+                        include: {
+                            product: true,
+                        },
+                    },
+                    ingridients: true,
+                },
+            }
+        }
     });
 }

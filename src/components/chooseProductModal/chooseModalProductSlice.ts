@@ -54,6 +54,9 @@ const chooseModalProductSlice = createSlice({
                 state.selectedIngridients.push(ingridient);
             }
         },
+        clearSelectedIngridients: (state) => {
+            state.selectedIngridients = []
+        },
         setPrice: (state) => {
             const variationPrice = state.product?.productVariations.find(variation =>
                 variation.size === state.selectedSize && variation.pizzaType === state.selectedDough
@@ -77,6 +80,7 @@ export const {
     setDoesNotExistMessage,
     setSelectedIngridients,
     setPrice,
+    clearSelectedIngridients
 
 } = actions
 

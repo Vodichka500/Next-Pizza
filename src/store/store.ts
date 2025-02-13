@@ -4,7 +4,7 @@ import topBarReducer from "@/components/topBar/topBarSlice"
 import priceFilterReducer from "@/components/priceFilter/priceFilterSlice";
 import filterSidebarReducer from "@/components/filterSidebar/filterSidebarSlice";
 import chooseModalProductReducer from "@/components/chooseProductModal/chooseModalProductSlice";
-import cartReduxReducer from "@/components/cart/cartSlice";
+import cartReduxReducer from "@/components/cart/CartSlice";
 
 const store = configureStore({
     reducer: {headerReducer, topBarReducer, priceFilterReducer, filterSidebarReducer, chooseModalProductReducer, cartReduxReducer},
