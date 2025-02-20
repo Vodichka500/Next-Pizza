@@ -3,6 +3,9 @@ import {NextResponse} from "next/server";
 import {prisma} from "../../../../../prisma/prisma-client";
 import {updateCartTotalAmount} from "@/lib/update-cart-total-amount";
 import {v4 as uuidv4} from "uuid";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/lib/authOptions";
+import {redirect} from "next/navigation";
 
 const findOrCreateToken = async () => {
     const cookieStore = await cookies();
@@ -20,13 +23,30 @@ const findOrCreateToken = async () => {
 }
 
 const findOrCreateCart = async (token) => {
+
     const cart = await prisma.cart.findFirst({ where: { token } });
+    const session = await getServerSession(authOptions);
+
+    let user = undefined
+    if (session) {
+        user = await prisma.user.findFirst({ where: { id: Number(session?.user.id) } });
+    }
+
     if(!cart){
-        await prisma.cart.create({
-            data: {
-                token: token
-            }
-        })
+        if(user){
+            await prisma.cart.create({
+                data: {
+                    token: token,
+                    //userId: user.id
+                }
+            })
+        }else {
+            await prisma.cart.create({
+                data: {
+                    token: token
+                }
+            })
+        }
         const newCart = await prisma.cart.findFirst({ where: { token } });
         return newCart
     }

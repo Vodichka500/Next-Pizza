@@ -7,6 +7,12 @@ import {sendEmail} from "@/lib/send-email";
 import SuggestionEmailTemplate from "@/components/emailTeamplates/suggestionEmailTeamplate";
 import {CryptoCloudSDK} from "@/lib/JS-CC-SDK";
 import Freecurrencyapi from '@everapi/freecurrencyapi-js';
+import {compare, hashSync} from "bcrypt";
+import VerificationCodeTemplate from "@/components/emailTeamplates/verificationCodeTemplate";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/lib/authOptions";
+import {redirect} from "next/navigation";
+import Profile from "@/components/profile/Profile";
 
 
 export async function createOrder(data){
@@ -84,4 +90,75 @@ export async function createOrder(data){
     }
 }
 
+
+export async function registerUser(data){
+
+    const user = await prisma.user.findFirst({
+        where: {
+            email: data.email,
+        },
+    });
+
+    if (user) {
+        return false;
+    }
+
+    const createdUser = await prisma.user.create({
+        data: {
+            fullname: data.name,
+            email: data.email,
+            password: hashSync(data.password, 10),
+        },
+    });
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await prisma.verificationCode.create({
+        data: {
+            code,
+            userId: createdUser.id,
+        },
+    });
+
+    // await sendEmail(
+    //     VerificationCodeTemplate({code}),
+    //     createdUser.email,
+    //     'Next Pizza / 📝 Подтверждение регистрации',
+    // );
+
+    return true;
+}
+
+
+export default async function changePassword(values){
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            throw new Error('Unauthorized');
+        }
+
+        const user = await prisma.user.findFirst({ where: { id: Number(session?.user.id) } });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const valid = await compare(values.oldPassword, user.password);
+        if(valid){
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    password: hashSync(values.newPassword, 10),
+                },
+            });
+
+            return true;
+        } else {
+            throw new Error('Invalid password');
+        }
+    } catch (e){
+        console.log('[ChangePassword] Server error', e);
+    }
+}
 

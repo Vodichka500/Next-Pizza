@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 
-import {ArrowRight, LogOut, Settings, ShoppingBag, ShoppingCart, User} from "lucide-react";
+import {ArrowRight, LogOut, Settings, ShoppingBag, ShoppingCart, User, UserPen} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,11 +13,39 @@ import SearchInput from "@/components/searchInput/SearchInput";
 import Cart from "@/components/cart/Cart";
 
 import {useSelector} from "react-redux";
+import {signOut, useSession} from "next-auth/react";
+import {useRouter, useSearchParams} from "next/navigation";
+import toast from "react-hot-toast";
+import {useEffect} from "react";
 
 
 
 const Header = ({isSearchVisible = true, isCartVisible = true}) => {
     const cart = useSelector(state => state.cartReduxReducer)
+    const { data: session } = useSession()
+
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    useEffect(() => {
+        let toastMessage = '';
+
+        if (searchParams.has('loginSuccessful')) {
+            toastMessage = 'Вы успешно вошли в систему';
+        }
+
+        if (searchParams.has('verified')) {
+            toastMessage = 'Вы успешно подтвердили свой аккаунт';
+        }
+
+        if (toastMessage) {
+            setTimeout(() => {
+                router.replace('/');
+                toast.success(toastMessage, {
+                    duration: 3000,
+                });
+            }, 1000);
+        }
+    }, [searchParams]);
 
     return(
         <Container>
@@ -35,21 +63,43 @@ const Header = ({isSearchVisible = true, isCartVisible = true}) => {
                 {isSearchVisible && <SearchInput/>}
 
                 <div className="flex gap-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className={clsx(
-                            "px-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background",
-                            "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
-                            "disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                            "border border-primary text-primary bg-transparent hover:bg-secondary p-2"
-                        )}>
-                            <User size={16}/>Профиль
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem> <ShoppingBag/><span>Заказы</span></DropdownMenuItem>
-                            <DropdownMenuItem> <Settings/><span>Настройки</span></DropdownMenuItem>
-                            <DropdownMenuItem><LogOut/><span>Выйти</span></DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {
+                        session ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className={clsx(
+                                    "px-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background",
+                                    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
+                                    "disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+                                    "border border-primary text-primary bg-transparent hover:bg-secondary p-2"
+                                )}>
+                                    <User size={16}/>Профиль
+                                </DropdownMenuTrigger>
+
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <User size={16}/><span>Профиль</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <ShoppingBag/><span>Заказы</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <Settings/><span>Настройки</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => signOut()}><LogOut/><span>Выйти</span></DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className={clsx(
+                                    "px-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background",
+                                    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
+                                    "disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+                                    "border border-primary text-primary bg-transparent hover:bg-secondary p-2"
+                                )}>
+                                    <User size={16}/>Войти
+                                </DropdownMenuTrigger>
+
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem><Link href="/login" className="flex gap-2 w-full"><User size={16}/><span>Войти</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/registration" className="flex gap-2 w-full"> <UserPen/><span>Зарегистрироваться</span></Link></DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )
+                    }
                     {isCartVisible && (
                         <Cart>
                             <Button className='relative group'>

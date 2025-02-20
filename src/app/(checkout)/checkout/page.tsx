@@ -22,6 +22,7 @@ const CheckoutPage = () => {
     const {getCart, loading, error} = useGetCartAPI()
     const [updateCart, setUpdateCart] = useState(false)
     const dispatch = useDispatch()
+    const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
 
     const cart = (useSelector(state => state.cartReduxReducer))
     const [sortedCartItems, setSortedCartItems] = useState([])
@@ -52,9 +53,11 @@ const CheckoutPage = () => {
         validationSchema: yupValidationSchema,
         onSubmit: async (values) =>  {
             console.log(values)
+            setSubmitButtonDisabled(true)
             await createOrder(values)
                 .then(url => window.location.href = url)
                 .catch(e => console.log(e))
+                .finally(() => setSubmitButtonDisabled(false))
         },
     });
 
@@ -70,7 +73,7 @@ const CheckoutPage = () => {
 
             </div>
 
-            <CheckoutSummary cart={cart} SERVICE_FEE={SERVICE_FEE} DELIVERY_COST={DELIVERY_COST}/>
+            <CheckoutSummary cart={cart} SERVICE_FEE={SERVICE_FEE} DELIVERY_COST={DELIVERY_COST} disable={submitButtonDisabled}/>
         </form>
     );
 }

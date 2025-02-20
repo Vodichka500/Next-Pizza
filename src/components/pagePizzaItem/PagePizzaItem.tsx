@@ -17,7 +17,7 @@ import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {setCartRedux} from "@/components/cart/CartSlice";
 import {usePostCartItemAPI} from "@/services/cartAPI";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 
 
 
@@ -159,7 +159,7 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
             <div className={clsx("absolute bottom-5 left-5 py-1 px-3 bg-red-300 rounded-2xl text-sm  delay-50 duration-300", doesNotExistMessage ? "opacity-100" : "opacity-0")}>
                 <MessageSquareWarning className="inline"/> К сожалению невозможно выбрать этот вариант.
             </div>
-            <Toaster />
+
         </div>
     )
 }

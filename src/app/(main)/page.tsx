@@ -2,6 +2,7 @@ import {Container} from "@/components/container/Container";
 import TopBar from "@/components/topBar/TopBar";
 import FilterSidebar from "@/components/filterSidebar/FilterSidebar";
 import MenuSection from "@/components/menuSection/MenuSection";
+import Stories from "@/components/stories/stories";
 
 
 export default function Home() {
@@ -10,6 +11,8 @@ export default function Home() {
 
     return (
         <div className="py-8 relative">
+            <Stories/>
+
             <Container>
                 <h2 className="text-3xl mb-3">Все пиццы</h2>
             </Container>
@@ -25,7 +28,7 @@ export default function Home() {
                 </div>
             </Container>
 
-            <div className="h-[2000px]"></div>
+            {/*<div className="h-[2000px]"></div>*/}
         </div>
     );
 }

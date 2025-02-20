@@ -9,21 +9,6 @@ import {useDeleteCartItemAPI} from "@/services/cartAPI";
 import 'react-dadata/dist/react-dadata.css';
 import {useDaData} from "@/hooks/useDadata";
 import {useState} from "react";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import clsx from "clsx";
 
 
@@ -37,17 +22,6 @@ const CheckoutForm = ({setUpdateCart, sortedCartItems, formik}) => {
             .then(res => setSuggestionAddresses(res.data.suggestions))
             .catch(err => console.log(err))
     }
-
-    // [
-    //     {
-    //         "value": "Волгоградская обл",
-    //         "unrestricted_value": "Волгоградская обл",
-    //         "data": {
-    //             "country": "Россия",
-    //         }
-    //     },
-    //
-    // ]
 
     const {deleteCartItem} = useDeleteCartItemAPI()
     const clearCart = (cartItems) => {

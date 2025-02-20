@@ -4,7 +4,8 @@ import CategoryBlock from "@/components/categoryBlock/CategoryBlock";
 import {useSelector} from "react-redux";
 import {selectAll} from "@/components/topBar/topBarSlice";
 import SkeletonMenuSection from "@/components/menuSection/SkeletonMenuSection";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import Image from "next/image";
 
 const MenuSection = () => {
     const categories = useSelector(state => selectAll(state))
@@ -17,6 +18,8 @@ const MenuSection = () => {
     const activeIngridients = useSelector(state => state.filterSidebarReducer.activeIngridients)
     const activeDough = useSelector(state => state.filterSidebarReducer.activeDough)
     const activeSizes = useSelector(state => state.filterSidebarReducer.activeSizes)
+
+    const [sortedCategories, setSortedCategories] = useState(categories || [])
 
     const sortByPrice = (a, b) => {
         const priceA = a.productVariations[0].price;
@@ -71,19 +74,42 @@ const MenuSection = () => {
     }, [categories]);
 
 
-
+    useEffect(() => {
+        setSortedCategories(applyFilters(categories))
+    }, [categories,
+        priceFrom,
+        priceTo,
+        sortBy,
+        activeCriteria,
+        activeIngridients,
+        activeDough,
+        activeSizes]);
 
     return (
         <div className="w-full py-8 ml-12">
-        {
-            categories.length>0 ?
-                (applyFilters(categories)).map((item) => {
+            {categories.length>0 && sortedCategories.length>0 &&
+                (sortedCategories.map((item) => {
                     return(
                         <CategoryBlock key={item.id} id={item.id} category={item}/>
                     )
-                }) :
-                <SkeletonMenuSection/>
-        }
+                }))
+            }
+            {categories.length === 0 && <SkeletonMenuSection/>}
+            {categories.length>0 && sortedCategories.length===0 &&
+                (
+                    <div className="w-full h-[500px] flex justify-center items-center">
+                        <div className="flex flex-col">
+                            <div className="relative w-[200px] h-[200px]">
+                                <Image className="w-full h-full" src="/empty-pizza-box.png"
+                                       alt="Empty pizza box" width={1080} height={1080}/>
+                            </div>
+                            <div className="mt-10 font-bold text-xl">
+                                Нет товаров по вашему запросу.<br/>Попробуйте изменить фильтры
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     )
 }

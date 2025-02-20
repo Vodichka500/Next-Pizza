@@ -7,7 +7,7 @@ import {useState} from "react";
 import {setCartRedux} from "@/components/cart/CartSlice";
 import {useDispatch} from "react-redux";
 import Spinner from "@/components/spinner/Spinner";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 import {clearSelectedIngridients} from "@/components/chooseProductModal/chooseModalProductSlice";
 
 const modalProductItem = ({product}) => {
@@ -52,7 +52,7 @@ const modalProductItem = ({product}) => {
                 </div>
 
             </div>
-            <Toaster />
+
         </div>
     )
 }

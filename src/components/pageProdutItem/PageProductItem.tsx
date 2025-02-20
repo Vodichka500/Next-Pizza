@@ -6,7 +6,7 @@ import {usePostCartItemAPI} from "@/services/cartAPI";
 import {useState} from "react";
 import {setCartRedux} from "@/components/cart/CartSlice";
 import Spinner from "@/components/spinner/Spinner";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 import {clearSelectedIngridients} from "@/components/chooseProductModal/chooseModalProductSlice";
 
 const PageProductItem = ({product}) => {
@@ -49,7 +49,6 @@ const PageProductItem = ({product}) => {
                     }
                 </Button>
             </div>
-            <Toaster />
         </div>
     )
 }

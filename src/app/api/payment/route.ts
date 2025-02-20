@@ -7,6 +7,8 @@ import SuccessEmailTemplate from "@/components/emailTeamplates/successEmailTempl
 import CanceledEmailTemplate from "@/components/emailTeamplates/canceledEmailTemplate";
 
 export async function POST(req: NextRequest){
+    console.log(typeof req)
+    console.log(req)
 
     const rawBody = await req.text();
     const body = new URLSearchParams(rawBody);

@@ -71,6 +71,8 @@ const PriceFilter = () => {
                       type="number"
                       placeholder={minPrice}
                       value={parseFloat(currentFromPrice)}
+                      disabled={true}
+                      className="disabled:cursor-default disabled:border-gray-600"
                       onInput={e => onFromInput(e)}/>
 
                   <RussianRuble
@@ -83,6 +85,8 @@ const PriceFilter = () => {
                       type={maxPrice}
                       placeholder="3000"
                       value={currentToPrice}
+                      disabled={true}
+                      className="disabled:cursor-default disabled:border-gray-600"
                       onInput={e => onToInput(e)}/>
                   <RussianRuble size={18}
                                 className="absolute right-1 top-1/2 translate-y-[-50%] text-gray-400"/>
