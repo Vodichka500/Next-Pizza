@@ -1,4 +1,4 @@
-const BASE_URL='http://localhost:3000/api'
+const BASE_URL='/api'
 const INGRIDIENTS_PATH='/ingridients'
 const USERS_PATH='/users'
 const PRODUCTS_SEARCH_NAME_PATH='/products/searchName'
