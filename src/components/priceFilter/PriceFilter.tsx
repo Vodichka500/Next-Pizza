@@ -5,56 +5,59 @@ import {RussianRuble} from "lucide-react";
 import RangeSlider from "@/components/priceFilter/rangeSlider";
 import {setCurrentFromPrice, setCurrentToPrice} from "@/components/priceFilter/priceFilterSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import useFilters from "@/hooks/useFilters";
+import {RootState} from "@/store/store";
 
 
 
 const PriceFilter = () => {
     const dispatch = useDispatch();
-    const minPrice = useSelector(state => state.priceFilterReducer.minPrice)
-    const maxPrice = useSelector(state => state.priceFilterReducer.maxPrice)
-    const currentFromPrice = useSelector(state => state.priceFilterReducer.currentFromPrice);
-    const currentToPrice =  useSelector(state => state.priceFilterReducer.currentToPrice);
+    const minPrice = useSelector((state: RootState) => state.priceFilterReducer.minPrice)
+    const maxPrice = useSelector((state: RootState) => state.priceFilterReducer.maxPrice)
+    const currentFromPrice = useSelector((state: RootState) => state.priceFilterReducer.currentFromPrice);
+    const currentToPrice =  useSelector((state: RootState) => state.priceFilterReducer.currentToPrice);
 
-    const fromInputRef = useRef(null)
-    const toInputRef = useRef(null)
+    const fromInputRef = useRef<HTMLInputElement | null>(null) //null
+    const toInputRef = useRef<HTMLInputElement | null>(null) //null
 
 
     const query  = useFilters();
     useEffect(() => {
-        query.currentFromPrice ? dispatch(setCurrentFromPrice(parseInt(query.currentFromPrice))) : null;
-        query.currentToPrice ? dispatch(setCurrentToPrice(parseInt(query.currentToPrice))) : null;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        query.currentFromPrice ? dispatch(setCurrentFromPrice(Math.floor(query.currentFromPrice))) : null;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        query.currentToPrice ? dispatch(setCurrentToPrice(Math.floor(query.currentToPrice))) : null;
 
     }, [dispatch]);
 
-    const onFromInput = (e) => {
-        const inputValue = parseFloat(e.target.value)
+    const onFromInput = (e: React.FormEvent<HTMLInputElement>) => {
+        const inputValue = parseFloat((e.target as HTMLInputElement).value)
 
         // -10, because value minGap = 10
         if(isNaN(inputValue)){
-            toInputRef.current.value = ""
+            if(toInputRef.current) toInputRef.current.value = ""
             dispatch(setCurrentFromPrice(0))
             return;
         }
         if(inputValue-10 <= currentToPrice && inputValue >= 0){
-            fromInputRef.current.value = ""
+            if(fromInputRef.current) fromInputRef.current.value = ""
             dispatch(setCurrentFromPrice(inputValue))
         }
 
     }
 
-    const onToInput = (e) => {
-            const inputValue = parseFloat(e.target.value)
+    const onToInput = (e: React.FormEvent<HTMLInputElement>) => {
+            const inputValue = parseFloat((e.target as HTMLInputElement).value)
 
             // -10, because value minGap = 10
             if(isNaN(inputValue)){
-                toInputRef.current.value = ""
+                if(toInputRef.current) toInputRef.current.value = ""
                 dispatch(setCurrentToPrice(maxPrice))
                 return;
             }
             if(inputValue-10 >= currentFromPrice && inputValue <= maxPrice){
-                toInputRef.current.value = ""
+                if(toInputRef.current) toInputRef.current.value = ""
                 dispatch(setCurrentToPrice(inputValue))
             }
     }
@@ -69,8 +72,8 @@ const PriceFilter = () => {
                   <Input
                       ref={fromInputRef}
                       type="number"
-                      placeholder={minPrice}
-                      value={parseFloat(currentFromPrice)}
+                      placeholder={String(minPrice)}
+                      value={currentFromPrice}
                       disabled={true}
                       className="disabled:cursor-default disabled:border-gray-600"
                       onInput={e => onFromInput(e)}/>
@@ -82,7 +85,7 @@ const PriceFilter = () => {
               <div className="relative">
                   <Input
                       ref={toInputRef}
-                      type={maxPrice}
+                      type="number"
                       placeholder="3000"
                       value={currentToPrice}
                       disabled={true}
@@ -92,7 +95,7 @@ const PriceFilter = () => {
                                 className="absolute right-1 top-1/2 translate-y-[-50%] text-gray-400"/>
               </div>
           </div>
-          <RangeSlider minGap={10} sliderMaxValue={maxPrice} sliderMinValue={minPrice}/>
+          <RangeSlider minGap={10} sliderMaxValue={maxPrice} /*sliderMinValue={minPrice}*/ />
 
       </div>
     )

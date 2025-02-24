@@ -1,11 +1,17 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { FieldInputProps } from "formik";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+interface CustomInputProps extends InputProps {
+    formikProps?: Omit<FieldInputProps<string | number | readonly string[]>, 'value'> & {
+        value?: string | number | readonly string[];
+    };
+}
+
+const Input = React.forwardRef<HTMLInputElement, CustomInputProps>(
   ({ className, type,formikProps , ...props }, ref) => {
     return (
       <input

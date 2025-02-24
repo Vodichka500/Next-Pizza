@@ -13,12 +13,12 @@ export const useProductAPI = () => {
        const response = request(BASE_URL+PRODUCTS_POPULAR_PATH, {});
        return response;
    }
-   const getProductByName = async (name) => {
+   const getProductByName = async (name: string) => {
        const response = request(BASE_URL+PRODUCTS_SEARCH_NAME_PATH, {params: {query: name}});
        return response;
    }
 
-    const getProductById = async (id) => {
+    const getProductById = async (id: number | string) => {
         const response = request(BASE_URL+PRODUCTS_SEARCH_ID_PATH, {params: {query: id}});
         return response;
     }

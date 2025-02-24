@@ -10,10 +10,21 @@ import Spinner from "@/components/spinner/Spinner";
 import toast from "react-hot-toast";
 import {clearSelectedIngridients} from "@/components/chooseProductModal/chooseModalProductSlice";
 
-const modalProductItem = ({product}) => {
+type Product = {
+    id: number,
+    name: string,
+    imageUrl: string,
+    productVariations: Array<{
+        id: number,
+        price: number
+    }>
+
+}
+
+const ModalProductItem = ({product} : {product: Product}) => {
 
     const dispatch = useDispatch()
-    const {postCartItem, loading, error, clearError} = usePostCartItemAPI()
+    const {postCartItem, loading, error} = usePostCartItemAPI()
     const [addedToCart, setAddedToCart] = useState(false)
 
     const addProductToCart = () => {
@@ -23,19 +34,18 @@ const modalProductItem = ({product}) => {
         }
         postCartItem(data)
             .then(response => {
-                const {data} = response
-                dispatch(setCartRedux(data))
+                if(response && response.data) dispatch(setCartRedux(response.data))
                 setAddedToCart(true)}
             )
             .then(() => toast.success("Добавлено в корзину"))
             .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
-            .finally(() => dispatch(clearSelectedIngridients()))
+            .finally(() => dispatch(clearSelectedIngridients("")))
     }
 
     return (
         <div className="grid grid-cols-5  gap-4">
             <div className="col-span-3 flex justify-center items-center ">
-                <Image src={product?.imageUrl} alt={"Image of " + product?.name} width={300} height={300}/>
+                <Image src={product.imageUrl} alt={"Image of " + product?.name} width={300} height={300}/>
             </div>
             <div
                 className="col-span-2 col-start-4  relative px-4 rounded-2xl bg-[#F4F1EE] h-[400px] left-shadow flex items-center gap-y-3">
@@ -44,7 +54,7 @@ const modalProductItem = ({product}) => {
                     <Button onClick={addProductToCart} className="max-w-sm  mt-6" disabled={addedToCart}>
                         {
                             !loading && !error && !addedToCart && <>Добавить в корзину за {product?.productVariations[0].price}<RussianRuble/></> ||
-                            loading && !error && <Spinner/> ||
+                            loading && !error && <Spinner colorHexCode="#FFFFFF"/> ||
                             error && !loading && "Произошла ошибка. Попробуйте позже" ||
                             addedToCart && "Добавлено в корзину"
                         }
@@ -57,4 +67,4 @@ const modalProductItem = ({product}) => {
     )
 }
 
-export default modalProductItem
+export default ModalProductItem

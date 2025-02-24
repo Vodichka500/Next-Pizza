@@ -5,7 +5,6 @@ import {updateCartTotalAmount} from "@/lib/update-cart-total-amount";
 import {v4 as uuidv4} from "uuid";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
-import {redirect} from "next/navigation";
 
 const findOrCreateToken = async () => {
     const cookieStore = await cookies();
@@ -22,14 +21,14 @@ const findOrCreateToken = async () => {
     return token;
 }
 
-const findOrCreateCart = async (token) => {
+const findOrCreateCart = async (token: string) => {
 
     const cart = await prisma.cart.findFirst({ where: { token } });
     const session = await getServerSession(authOptions);
 
     let user = undefined
-    if (session) {
-        user = await prisma.user.findFirst({ where: { id: Number(session?.user.id) } });
+    if (session && session.user && session.user.id) {
+        user = await prisma.user.findFirst({ where: { id: Number(session.user.id) } });
     }
 
     if(!cart){
@@ -53,8 +52,20 @@ const findOrCreateCart = async (token) => {
     return cart
 }
 
-const isCartItemExist = async (cartItems, productVariationId, ingridients = []) => {
-    let itemId = undefined
+type Ingridient = {
+    id: number;
+    // другие поля, если нужно
+}
+
+type CartItem = {
+    id: number;
+    productVariationId: number;
+    ingridients?: Ingridient[];
+    // другие поля, если нужно
+}
+
+const isCartItemExist = async (cartItems: CartItem[], productVariationId: number, ingridients: Ingridient[] = []): Promise<string | undefined> => {
+    let itemId: number | undefined = undefined;
 
     if(cartItems.some(item => item.productVariationId === productVariationId)){
         cartItems.forEach(item => {
@@ -71,7 +82,7 @@ const isCartItemExist = async (cartItems, productVariationId, ingridients = []) 
                     const isEqual = existIngridients.every(ingridientId => ingridientsIds.includes(ingridientId));
                     if(isEqual){
                         itemId = item.id
-                        return
+                        return 0
                     }
                 }
             }
@@ -82,17 +93,28 @@ const isCartItemExist = async (cartItems, productVariationId, ingridients = []) 
 
 export async function POST(req: Request){
     const token = await findOrCreateToken();
+    if(!token){
+        return NextResponse.json({error: "[API/CARTITEM/ROUTE.TS]: Token undefined. Line 96"})
+    }
     const cart = await findOrCreateCart(token);
+
+    if(!cart){
+        return NextResponse.json({error: "[API/CARTITEM/ROUTE.TS]: Cart undefined. Line 99"})
+    }
 
     const cartItems = await prisma.cartItem.findMany({where: {cartId: cart.id}, include: {ingridients: true}});
 
     const {productVariationId, ingridients, quantity} = await req.json();
 
-    const existCartItemId = await isCartItemExist(cartItems, productVariationId, ingridients)
+    const existCartItemId= await isCartItemExist(cartItems, productVariationId, ingridients)
 
     if(existCartItemId){
 
-        const existingCartItem = cartItems.find(item => item.id === existCartItemId);
+        const existingCartItem = cartItems.find(item => item.id === Number(existCartItemId));
+
+        if (!existingCartItem || !existingCartItem.id || existingCartItem.quantity){
+            return NextResponse.json({error: "[API/CARTITEM/ROUTE.TS]: ExistingcartItem undefined. Line 116"})
+        }
 
         await prisma.cartItem.update({
             where: {
@@ -107,7 +129,7 @@ export async function POST(req: Request){
         return NextResponse.json(updatedUserCart);
     }
 
-    const cartItem = await prisma.cartItem.create({
+    await prisma.cartItem.create({
         data: {
             cartId: cart.id,
             productVariationId: productVariationId, // ID вариации продукта

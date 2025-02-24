@@ -4,12 +4,39 @@ import {calcCartItemTotalPrice} from "@/lib/calc-item-total-price";
 import {Button} from "@/components/ui/button";
 import {CircleAlert, Trash2} from "lucide-react";
 import Spinner from "@/components/spinner/Spinner";
+import React from "react";
 
-const CheckoutCartItem = ({cartItem, setUpdateCart}) => {
-    const {patchCartItem, loading, error, clearError} = usePatchCartItemAPI()
+// type CartItem = {
+//     id: number;
+//     url: string;
+//     productName: string;
+//     ingridients: string;
+//     quantity: number;
+//     price: number;
+//     updateCart?: boolean;
+//     setUpdateCart: React.Dispatch<React.SetStateAction<boolean>>;
+//     cartItem: {
+//         id: number
+//         productVariation: {product: {imageUrl: string, name: string}, price: number}
+//         ingridients: {name: string}[]
+//         quantity: number
+//         price: number
+//     };
+// };
+
+type CartItemItem = {
+    id: number
+    productVariation: {product: {imageUrl: string, name: string}, price: number}
+    ingridients: {name: string; price: number}[]
+    quantity: number
+    price: number
+}
+
+const CheckoutCartItem = ({cartItem, setUpdateCart}: {cartItem: CartItemItem, setUpdateCart: (arg0:  boolean) => void}) => {
+    const {patchCartItem} = usePatchCartItemAPI()
     const {deleteCartItem, loading: loadingDeleteItem, error: errorDeleteItem, clearError: clearDeleteItemError } = useDeleteCartItemAPI()
 
-    const increaseQuantity = (id, quantity) => {
+    const increaseQuantity = (id: number, quantity: number) => {
         patchCartItem(id, {quantity: quantity + 1})
             .then(res => console.log(res))
             .then(() => setUpdateCart(true))
@@ -17,7 +44,7 @@ const CheckoutCartItem = ({cartItem, setUpdateCart}) => {
         //setUpdateCart(true)
     }
 
-    const decreaseQuantity = (id, quantity) => {
+    const decreaseQuantity = (id: number, quantity: number) => {
         if (quantity === 1) {
             return
         }
@@ -29,7 +56,7 @@ const CheckoutCartItem = ({cartItem, setUpdateCart}) => {
         //setUpdateCart(true)
     }
 
-    const deleteItem = (id) => {
+    const deleteItem = (id: number) => {
         deleteCartItem(id)
             .then(res => console.log(res))
             .then(() => setUpdateCart(true))
@@ -45,7 +72,7 @@ const CheckoutCartItem = ({cartItem, setUpdateCart}) => {
                     <div className="col-span-5 flex gap-4">
                         <div className="w-[70px] h-[70px]">
                             <Image
-                                src={cartItem.productVariation?.product.imageUrl}
+                                src={cartItem.productVariation.product.imageUrl}
                                 className="w-full h-full"
                                 alt="pizza"
                                 width={1080}

@@ -17,12 +17,12 @@ import {signOut, useSession} from "next-auth/react";
 import {useRouter, useSearchParams} from "next/navigation";
 import toast from "react-hot-toast";
 import {useEffect} from "react";
-
+import {RootState} from "@/store/store";
 
 
 const Header = ({isSearchVisible = true, isCartVisible = true}) => {
-    const cart = useSelector(state => state.cartReduxReducer)
-    const { data: session } = useSession()
+    const cart = useSelector((state: RootState) => state.cartReduxReducer)
+    const {data: session} = useSession()
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -47,7 +47,8 @@ const Header = ({isSearchVisible = true, isCartVisible = true}) => {
         }
     }, [searchParams]);
 
-    return(
+    return (
+
         <Container>
             <div className="flex justify-between items-center py-8 border-b-2 border-gray-100 ">
                 <Link href="/">
@@ -76,10 +77,14 @@ const Header = ({isSearchVisible = true, isCartVisible = true}) => {
                                 </DropdownMenuTrigger>
 
                                 <DropdownMenuContent>
-                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <User size={16}/><span>Профиль</span></Link></DropdownMenuItem>
-                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <ShoppingBag/><span>Заказы</span></Link></DropdownMenuItem>
-                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <Settings/><span>Настройки</span></Link></DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => signOut()}><LogOut/><span>Выйти</span></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full"> <User
+                                        size={16}/><span>Профиль</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full">
+                                        <ShoppingBag/><span>Заказы</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/profile" className="flex gap-2 w-full">
+                                        <Settings/><span>Настройки</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => signOut()}><LogOut/><span>Выйти</span></DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
@@ -94,8 +99,10 @@ const Header = ({isSearchVisible = true, isCartVisible = true}) => {
                                 </DropdownMenuTrigger>
 
                                 <DropdownMenuContent>
-                                    <DropdownMenuItem><Link href="/login" className="flex gap-2 w-full"><User size={16}/><span>Войти</span></Link></DropdownMenuItem>
-                                    <DropdownMenuItem><Link href="/registration" className="flex gap-2 w-full"> <UserPen/><span>Зарегистрироваться</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/login" className="flex gap-2 w-full"><User
+                                        size={16}/><span>Войти</span></Link></DropdownMenuItem>
+                                    <DropdownMenuItem><Link href="/registration" className="flex gap-2 w-full">
+                                        <UserPen/><span>Зарегистрироваться</span></Link></DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         )
@@ -115,10 +122,11 @@ const Header = ({isSearchVisible = true, isCartVisible = true}) => {
                                 />
                             </Button>
                         </Cart>
-                        )}
+                    )}
                 </div>
             </div>
         </Container>
+
     )
 }
 

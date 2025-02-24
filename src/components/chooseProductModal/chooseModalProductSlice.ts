@@ -1,17 +1,48 @@
-import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
+import {createEntityAdapter, createSlice, Dispatch, Slice} from "@reduxjs/toolkit";
+
+// Define the type for the ingredients
+interface Ingredient {
+    id: number;
+    name: string;
+    price: number;
+    imageUrl: string;
+}
+
+interface ProductVariation {
+    id: number;
+    size: number;
+    pizzaType: number;
+    price: number;
+}
+
+interface ChooseModalProductState {
+    product: {
+        id: number;
+        name: string;
+        imageUrl: string;
+        productVariations: ProductVariation[];
+        ingridients: Ingredient[];
+    } | null;
+    loadingProduct: boolean | null;
+    errorProduct: string | null;
+    ingidients: Ingredient[];
+    selectedSize: number | null;
+    selectedDough: number | null;
+    doesNotExistMessage: boolean;
+    selectedIngridients: Ingredient[];
+    price: number | null;
+}
 
 
-export const triggerMessage = () => (dispatch) => {
+export const triggerMessage = () => (dispatch: Dispatch) => {
     dispatch(setDoesNotExistMessage(true));
     setTimeout(() => {
         dispatch(setDoesNotExistMessage(false));
     }, 2000);
 };
 
-
-
 const chooseModalProductAdapter = createEntityAdapter();
-const initialState = chooseModalProductAdapter.getInitialState({
+const initialState : ChooseModalProductState = chooseModalProductAdapter.getInitialState({
     product: null,
     loadingProduct: null,
     errorProduct: null,
@@ -22,7 +53,7 @@ const initialState = chooseModalProductAdapter.getInitialState({
     selectedIngridients: [],
     price: null,
 })
-const chooseModalProductSlice = createSlice({
+const chooseModalProductSlice: Slice<ChooseModalProductState> = createSlice({
     name: "chooseModalProduct",
     initialState,
     reducers: {
@@ -41,8 +72,8 @@ const chooseModalProductSlice = createSlice({
         setDoesNotExistMessage: (state, action) => {
             state.doesNotExistMessage = action.payload;
         },
-        setSelectedIngridients: (state, action) => {
-            const selectedIngridients = state.selectedIngridients
+        setSelectedIngridients: (state: ChooseModalProductState, action) => {
+            const selectedIngridients : Array<Ingredient> = state.selectedIngridients
             const ingridient = action.payload
             const ids = selectedIngridients.map(item => item.id)
 
@@ -54,10 +85,12 @@ const chooseModalProductSlice = createSlice({
                 state.selectedIngridients.push(ingridient);
             }
         },
-        clearSelectedIngridients: (state) => {
+        clearSelectedIngridients: (state, action) => {
+            console.log(action)
             state.selectedIngridients = []
         },
-        setPrice: (state) => {
+        setPrice: (state, action) => {
+            console.log(action)
             const variationPrice = state.product?.productVariations.find(variation =>
                 variation.size === state.selectedSize && variation.pizzaType === state.selectedDough
             )?.price;
@@ -65,7 +98,9 @@ const chooseModalProductSlice = createSlice({
             for(const ingridient of state.selectedIngridients){
                 ingridientsPrice += ingridient.price
             }
-            state.price = variationPrice+ingridientsPrice
+            if(variationPrice){
+                state.price = variationPrice+ingridientsPrice
+            }
         },
 
     }

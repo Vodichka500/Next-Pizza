@@ -9,10 +9,19 @@ import Spinner from "@/components/spinner/Spinner";
 import toast from "react-hot-toast";
 import {clearSelectedIngridients} from "@/components/chooseProductModal/chooseModalProductSlice";
 
-const PageProductItem = ({product}) => {
+interface Product {
+    id: number | string
+    name: string
+    imageUrl: string
+    productVariations: {
+        id: number | string
+        price: number
+    }[]
+}
+const PageProductItem = ({product} : {product: Product}) => {
 
     const dispatch = useDispatch()
-    const {postCartItem, loading, error, clearError} = usePostCartItemAPI()
+    const {postCartItem, loading, error} = usePostCartItemAPI()
     const [addedToCart, setAddedToCart] = useState(false)
 
     const addProductToCart = () => {
@@ -22,13 +31,12 @@ const PageProductItem = ({product}) => {
         }
         postCartItem(data)
             .then(response => {
-                const {data} = response
-                dispatch(setCartRedux(data))
+                if (response && response.data) dispatch(setCartRedux(data))
                 setAddedToCart(true)}
             )
             .then(() => toast.success("Добавлено в корзину"))
             .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
-            .finally(() => dispatch(clearSelectedIngridients()))
+            .finally(() => dispatch(clearSelectedIngridients("")))
     }
 
     return (
@@ -43,7 +51,7 @@ const PageProductItem = ({product}) => {
                 <Button onClick={addProductToCart} disabled={addedToCart} className="max-w-sm  mt-6">
                     {
                         !loading && !error && !addedToCart && <>Добавить в корзину за {product?.productVariations[0].price}<RussianRuble/></> ||
-                        loading && !error && <Spinner/> ||
+                        loading && !error && <Spinner colorHexCode="#FFFFFF"/> ||
                         error && !loading && "Произошла ошибка. Попробуйте позже" ||
                         addedToCart && "Добавлено в корзину"
                     }

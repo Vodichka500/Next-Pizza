@@ -22,7 +22,7 @@ import PageProductItem from "@/components/pageProdutItem/PageProductItem";
 export default function ProductPage(){
 
     const dispatch = useDispatch()
-    const { id } = useParams();
+    const { id }  = useParams();
 
     const {getProductById, loading: loadingProduct, error: errorProduct} = useProductAPI();
     const {getAllIngridients, loading:loadingIngridients , error:errorIngridients} = useIngridientsAPI();
@@ -30,13 +30,27 @@ export default function ProductPage(){
 
     useEffect(() => {
         dispatch(setProduct(null))
-        getProductById(id)
-            .then(res => dispatch(setProduct(res.data)))
+        if(typeof id === "string" || typeof id === "number"){
+            getProductById(id)
+                .then(res => {
+                    if(res && res.data){
+                        dispatch(setProduct(res.data))
+                    }else {
+                        console.error('Полученные данные пусты или undefined');
+                    }
+                })
+        }
         getAllIngridients()
-            .then(res => dispatch(setIngridients(res.data)))
+            .then(res => {
+                if(res && res.data){
+                    dispatch(setIngridients(res.data))
+                }else {
+                    console.error('Полученные данные пусты или undefined');
+                }
+            })
     }, []);
 
-    const setContent = (loading, error) => {
+    const setContent = (loading: boolean, error: boolean) => {
         if(loading && !error){
             return <Spinner/>
         }else if (!loading && error){

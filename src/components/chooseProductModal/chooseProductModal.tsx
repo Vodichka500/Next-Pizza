@@ -4,12 +4,10 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} fr
 import {useRouter} from "next/navigation";
 import {useProductAPI} from "@/services/productsAPI";
 import {useEffect} from "react";
-import Spinner from "@/components/spinner/Spinner";
 import {VisuallyHidden} from "@radix-ui/react-visually-hidden";
 import useIngridientsAPI from "@/services/ingridientsAPI";
 import {useDispatch} from "react-redux";
 import {
-    setDoesNotExistMessage,
     setIngridients,
     setProduct
 } from "@/components/chooseProductModal/chooseModalProductSlice";
@@ -18,7 +16,8 @@ import ModalProductItem from "@/components/modalProductItem/modalProductItem";
 import ModalPizzaItem from "@/components/modalPizzaItem/ModalPizzaItem";
 import ModalSkeleton from "@/components/modalSkeleton/ModalSkeleton";
 
-const ChooseProductModal = ({id, className}) => {
+const ChooseProductModal = ({id} : {id: number | string}) => {
+
 
     const dispatch = useDispatch()
     const router = useRouter();
@@ -29,12 +28,12 @@ const ChooseProductModal = ({id, className}) => {
     useEffect(() => {
         dispatch(setProduct(null))
         getProductById(id)
-            .then(res => dispatch(setProduct(res.data)))
+            .then(res => res && res.data && dispatch(setProduct(res.data)))
         getAllIngridients()
-            .then(res => dispatch(setIngridients(res.data)))
+            .then(res => res && res.data && dispatch(setIngridients(res.data)))
     }, []);
 
-    const setContent = (loading, error) => {
+    const setContent = (loading: boolean, error: boolean) => {
         if(loading && !error){
             return <ModalSkeleton/>
         }else if (!loading && error){

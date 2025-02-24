@@ -7,12 +7,17 @@ const profilePage = async () => {
 
     const session = await getServerSession(authOptions);
 
-    if (!session) {
+    if (!session || !session.user) {
         return redirect('/not-auth');
     }
 
+    let id
+    if(session.user.id){
+        id = session.user.id
+    }
 
-    const user = await prisma.user.findFirst({ where: { id: Number(session?.user.id) } });
+
+    const user = await prisma.user.findFirst({ where: { id: Number(id) } });
     console.log(user)
 
     if (!user) {

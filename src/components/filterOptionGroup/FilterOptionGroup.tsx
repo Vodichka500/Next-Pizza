@@ -2,14 +2,23 @@
 
 import {Checkbox} from "@/components/ui/checkbox";
 import clsx from "clsx";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useDispatch} from "react-redux";
+import {ActionCreatorWithPayload} from "@reduxjs/toolkit";
 
-const FilterOptionGroup = ({title, filters, setActiveFilter, activeFilters}) => {
+
+type FilterOptionGroupProps = {
+    title?: string | null;
+    filters: string[];
+    setActiveFilter: ActionCreatorWithPayload<string>;
+    activeFilters: string[];
+};
+
+const FilterOptionGroup = ({title, filters, setActiveFilter, activeFilters} : FilterOptionGroupProps) => {
     const [showAll, setShowAll] = useState(false)
     const dispatch = useDispatch()
 
-    const setFilterList = (filters) =>{
+    const setFilterList = (filters: string[]) =>{
         if(filters.length < 3){
             return filters
         } else if (!showAll){
@@ -19,17 +28,20 @@ const FilterOptionGroup = ({title, filters, setActiveFilter, activeFilters}) => 
         }
     }
 
-    const setActiveFilters = (e, setActiveFunction) => {
-        const filter = e.target.id;
+    const setActiveFilters = (
+        filter: string,
+        setActiveFunction: ActionCreatorWithPayload<string>
+    ) => {
+        //const filter = e.target.id;
         dispatch(setActiveFunction(filter))
     };
 
-    const showFilters = (filters) => {
+    const showFilters = (filters: string[]) => {
         return(
             filters.map((filter, i) => {
                 return (
                     <div key={i} className="flex items-center gap-2" >
-                        <Checkbox id={filter} className="rounded" checked={activeFilters.includes(filter)} onClick={e => setActiveFilters(e,setActiveFilter)}/>
+                        <Checkbox id={filter} className="rounded" checked={activeFilters.includes(filter)} onClick={() => setActiveFilters(filter, setActiveFilter)}/>
                         <label htmlFor={filter} className="cursor-pointer">{filter}</label>
                     </div>
                 );

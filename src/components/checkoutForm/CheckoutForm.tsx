@@ -8,24 +8,69 @@ import {Textarea} from "@/components/ui/textarea";
 import {useDeleteCartItemAPI} from "@/services/cartAPI";
 import 'react-dadata/dist/react-dadata.css';
 import {useDaData} from "@/hooks/useDadata";
-import {useState} from "react";
+import React, {useState} from "react";
 import clsx from "clsx";
+import {FormikProps} from "formik";
 
 
-const CheckoutForm = ({setUpdateCart, sortedCartItems, formik}) => {
+interface FormikValues {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    comment: string;
+    time: string;
+}
+// type CartItem = {
+//     id: number;
+//     url: string;
+//     productName: string;
+//     ingridients: string;
+//     quantity: number;
+//     price: number;
+//     updateCart?: boolean;
+//     setUpdateCart: React.Dispatch<React.SetStateAction<boolean>>;
+//     cartItem: {
+//         id: number
+//         productVariation: {product: {imageUrl: string, name: string}, price: number}
+//         ingridients: {name: string}[]
+//         quantity: number
+//         price: number
+//     };
+// };
+
+type CartItemItem = {
+    id: number
+    productVariation: {product: {imageUrl: string, name: string}, price: number}
+    ingridients: {name: string; price: number}[]
+    quantity: number
+    price: number
+}
+
+type SortedCartItems = Array<CartItemItem>
+
+
+
+
+const CheckoutForm = ({setUpdateCart, sortedCartItems, formik} : {setUpdateCart: (arg0: boolean) => void , sortedCartItems: SortedCartItems, formik: FormikProps<FormikValues> }) => {
+
+
+
 
     const {getAddresses} = useDaData()
-    const [suggestionAddresses, setSuggestionAddresses] = useState()
+    const [suggestionAddresses, setSuggestionAddresses] = useState<{ value: string }[]>([]);
     const [open, setOpen] = useState(false);
-    const handleAddressChange = async (e) => {
+    const handleAddressChange = async (e:  React.ChangeEvent<HTMLInputElement>) => {
         getAddresses({query: e.target.value})
-            .then(res => setSuggestionAddresses(res.data.suggestions))
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            .then(res => {res && res.data && res.data.suggestions && setSuggestionAddresses(res.data.suggestions)})
             .catch(err => console.log(err))
     }
 
     const {deleteCartItem} = useDeleteCartItemAPI()
-    const clearCart = (cartItems) => {
-        cartItems.forEach( item => {
+    const clearCart = (cartItems: SortedCartItems) => {
+        cartItems.forEach( (item: CartItemItem)  => {
                 deleteCartItem(item.id)
                     .then(() => setUpdateCart(true))
                     .catch(err => console.log(err))
@@ -49,7 +94,7 @@ const CheckoutForm = ({setUpdateCart, sortedCartItems, formik}) => {
         <>
             <WhiteCard cardTitle={"1. Корзина"} showDeleteButton={true} clearCart={clearCart} cartItems={sortedCartItems}>
                 {sortedCartItems.length > 0 ?
-                    sortedCartItems.map((item, index) => (
+                    sortedCartItems.map((item:CartItemItem, index) => (
                         <CheckoutCartItem key={index} cartItem={item} setUpdateCart={setUpdateCart}/>
                     ))
                     :
@@ -149,7 +194,6 @@ const CheckoutForm = ({setUpdateCart, sortedCartItems, formik}) => {
                     <div className="flex flex-col gap-2 mt-2 col-span-2">
                         <Label htmlFor="comment">Комментарий</Label>
                         <Textarea
-                            type="text"
                             id="comment"
                             name="comment"
                             placeholder="Введите ваш комментарий"
@@ -184,7 +228,7 @@ const CheckoutForm = ({setUpdateCart, sortedCartItems, formik}) => {
 
 export default CheckoutForm;
 
-const ErrorMessage = ({message}) => {
+const ErrorMessage = ({message} : {message: string}) => {
     return (
         <div className="text-sm text-red-400">{message}</div>
     )

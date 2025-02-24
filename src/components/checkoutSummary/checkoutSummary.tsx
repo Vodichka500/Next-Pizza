@@ -1,7 +1,19 @@
 import {ShoppingCart} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
-const checkoutSummary = ({cart, SERVICE_FEE, DELIVERY_COST, disable}) => {
+type Props = {
+    cart:
+    {
+        cartRedux: {
+            totalAmount: number;
+        }
+    };
+    SERVICE_FEE: number;
+    DELIVERY_COST: number;
+    disable: boolean;
+}
+
+const checkoutSummary = ({cart, SERVICE_FEE, DELIVERY_COST, disable} : Props) => {
     return (
         <div className="col-span-2 mt-9">
             <div className="w-full py-4 border-2 rounded-2xl min-h-[200px] mt-6">
@@ -29,7 +41,7 @@ const checkoutSummary = ({cart, SERVICE_FEE, DELIVERY_COST, disable}) => {
                 </div>
                 <div className="w-full border-b-2 border-gray-200 mt-5"/>
                 <div className="px-5 mt-5">
-                    <Button type="submit" variant="primary" className="w-full bg-primary text-white text-base py-6" disabled={!cart.cartRedux.totalAmount || cart.cartRedux.totalAmount === 0 || disable}>Перейти к
+                    <Button type="submit" className="w-full bg-primary text-white text-base py-6" disabled={!cart.cartRedux.totalAmount || cart.cartRedux.totalAmount === 0 || disable}>Перейти к
                         оплате</Button>
                 </div>
             </div>

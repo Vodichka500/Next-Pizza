@@ -1,8 +1,19 @@
 import { createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 
+interface SidebarState {
+    criteria: string[];
+    ingridients: string[];
+    dough: string[];
+    sizes: string[];
+    activeCriteria: string[];
+    activeIngridients: string[];
+    activeDough: string[];
+    activeSizes: string[];
+}
+type ActiveFilterArr = string[]
 
 const filterSidebarAdapter = createEntityAdapter()
-const initialState = filterSidebarAdapter.getInitialState({
+const initialState: SidebarState = filterSidebarAdapter.getInitialState({
     criteria: ["Можно собирать", "Новинка"],
     // ingridients: ["Сырный соус", "Моцарелла", "Чеснок", "Солённые огурчики", "Красный лук", "Томаты"],
     ingridients: [],
@@ -15,7 +26,7 @@ const initialState = filterSidebarAdapter.getInitialState({
     activeSizes: [],
 })
 
-const updateActiveFilter = (activeFilterArr, filter) => {
+const updateActiveFilter = (activeFilterArr: ActiveFilterArr, filter: string) => {
     if (activeFilterArr.includes(filter)) {
         return activeFilterArr.filter(item => item !== filter);
     } else {

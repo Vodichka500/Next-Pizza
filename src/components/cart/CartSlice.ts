@@ -3,7 +3,8 @@ import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 const CartAdapter = createEntityAdapter()
 const initialState = CartAdapter.getInitialState({
     cartRedux: {
-        cartItems: []
+        cartItems: [],
+        totalAmount: 0,
     }
 })
 

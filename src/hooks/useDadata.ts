@@ -1,13 +1,13 @@
 import axios from "axios";
 import {useMemo} from "react";
-const dadataToken = process.env.DADATA_API_KEY
+
 
 // const data = JSON.stringify({
 //     "query": "Москва"
 // });
 
 export const useDaData = () => {
-    const getAddresses = useMemo(() => async (data) => {
+    const getAddresses = useMemo(() => async (data: { query: string; }) => {
         const jsonData = await (JSON.stringify(data))
         try {
             return await axios.request({

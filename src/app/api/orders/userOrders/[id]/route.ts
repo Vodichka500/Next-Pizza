@@ -1,8 +1,9 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "../../../../../../prisma/prisma-client";
 
-export async function GET(req: NextRequest, {params}){
-    const id = parseInt(params.id);
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }>}) {
+    const reqId = (await params).id
+    const id = Number(reqId)
 
     const orders = await prisma.order.findMany({
         where: {

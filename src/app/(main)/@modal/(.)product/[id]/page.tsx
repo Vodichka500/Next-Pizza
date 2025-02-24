@@ -1,10 +1,15 @@
-import ChooseProductModal from "@/components/chooseProductModal/chooseProductModal";
+'use client'
 
-const productModalPage = async ({params}) => {
-    const id = await params.id
+import ChooseProductModal from "@/components/chooseProductModal/chooseProductModal";
+import { use } from "react";
+
+
+
+const ProductModalPage =  ({params}: {params: Promise<{ id: string }>}) => {
+    const {id} =  use(params)
     return(
         <ChooseProductModal id={id}/>
     )
 }
 
-export default productModalPage
+export default ProductModalPage

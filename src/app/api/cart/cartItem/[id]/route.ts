@@ -2,9 +2,10 @@ import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "../../../../../../prisma/prisma-client";
 import {updateCartTotalAmount} from "@/lib/update-cart-total-amount";
 
-export async function GET(req: NextRequest, {params}){
-    const {id} = await params
-    const cartItemId = parseInt(id);
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }>}) {
+    const reqId = (await params).id
+    const cartItemId = Number(reqId)
+
     const token = req.cookies.get('token')?.value
 
     if (!token) {
@@ -20,9 +21,10 @@ export async function GET(req: NextRequest, {params}){
     return NextResponse.json(cartItem);
 }
 
-export async function PATCH(req: NextRequest, {params}){
-    const {id} = await params
-    const cartItemId = parseInt(id);
+export async function PATCH(req: NextRequest,  { params }: { params: Promise<{ id: string }>}) {
+    const reqId = (await params).id
+    const cartItemId = Number(reqId)
+
     const data = (await req.json()) as {quantity: number}
     const token = req.cookies.get('token')?.value
 
@@ -40,7 +42,7 @@ export async function PATCH(req: NextRequest, {params}){
         return NextResponse.json({ error: 'Cart item not found' });
     }
 
-    const res = await prisma.cartItem.update({
+    await prisma.cartItem.update({
         where: {
             id: cartItemId,
         },
@@ -53,9 +55,9 @@ export async function PATCH(req: NextRequest, {params}){
     return NextResponse.json(updatedUserCart);
 }
 
-export async function DELETE(req: NextRequest, {params}){
-    const {id} = await params
-    const cartItemId = parseInt(id);
+export async function DELETE(req: NextRequest,  { params }: { params: Promise<{ id: string }>}) {
+    const reqId = (await params).id
+    const cartItemId = Number(reqId)
 
     const token = req.cookies.get('token')?.value
 
@@ -73,7 +75,7 @@ export async function DELETE(req: NextRequest, {params}){
         return NextResponse.json({ error: 'Cart item not found' });
     }
 
-    const res = await prisma.cartItem.delete({
+    await prisma.cartItem.delete({
         where: {
             id: cartItemId,
         },

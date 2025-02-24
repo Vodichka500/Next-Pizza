@@ -1,6 +1,7 @@
 import {Resend} from "resend";
+import {ReactNode} from "react";
 
-export const sendEmail = async (template, to, subject) => {
+export const sendEmail = async (template: ReactNode, to: string, subject: string) => {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,7 +14,9 @@ export const sendEmail = async (template, to, subject) => {
     });
 
     if(error){
-        throw new Error(error)
+        // Ensure `error` is a string or extract the message if it's an object
+        const errorMessage = (error instanceof Error ? error.message : JSON.stringify(error));
+        throw new Error(errorMessage);
     }
 
     return data

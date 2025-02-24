@@ -2,22 +2,28 @@
 
 import {cookies} from "next/headers";
 import {prisma} from "../../prisma/prisma-client";
-import {OrderStatus, Prisma} from "@prisma/client";
+import {OrderStatus} from "@prisma/client";
 import {sendEmail} from "@/lib/send-email";
 import SuggestionEmailTemplate from "@/components/emailTeamplates/suggestionEmailTeamplate";
 import {CryptoCloudSDK} from "@/lib/JS-CC-SDK";
-import Freecurrencyapi from '@everapi/freecurrencyapi-js';
+//import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 import {compare, hashSync} from "bcrypt";
-import VerificationCodeTemplate from "@/components/emailTeamplates/verificationCodeTemplate";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
-import {redirect} from "next/navigation";
-import Profile from "@/components/profile/Profile";
+import {randomUUID} from "node:crypto";
 
 
-export async function createOrder(data){
+interface OrderData {
+    firstName: string;
+    lastName: string;
+    address: string;
+    email: string;
+    comment?: string;
+}
+export async function createOrder(data : OrderData){
 
     const cryptoCloud = new CryptoCloudSDK(process.env.CRYPTO_CLOUD_API_KEY)
+    console.log(cryptoCloud)
 
     try {
         const token = (await cookies()).get("token")?.value;
@@ -44,14 +50,14 @@ export async function createOrder(data){
             throw new Error('Cart is empty');
         }
 
-        const freecurrencyapi = new Freecurrencyapi('fca_live_lCLegJOu6QtdEHuMpjUYbgxAuMhTHsoxLGEsgZPR');
-        const rate = await freecurrencyapi.latest({
-            base_currency: 'RUB',
-            currencies: 'USD'
-        })
-
-        const createInvoice = await cryptoCloud.createInvoice({amount: cart.totalAmount * rate.data.USD, shop_id: "bZlGXdFVDrBbdr5O"})
-        console.log(createInvoice)
+        // const freecurrencyapi = new Freecurrencyapi('fca_live_lCLegJOu6QtdEHuMpjUYbgxAuMhTHsoxLGEsgZPR');
+        // const rate = await freecurrencyapi.latest({
+        //     base_currency: 'RUB',
+        //     currencies: 'USD'
+        // })
+        // console.log(rate.data.USD)
+        //const createInvoice = await cryptoCloud.createInvoice({amount: cart.totalAmount * rate.data.USD, shop_id: "bZlGXdFVDrBbdr5O"})
+        //console.log(createInvoice)
 
 
         const order = await prisma.order.create({
@@ -64,7 +70,7 @@ export async function createOrder(data){
                 email: data.email,
                 comment: data.comment || "",
                 status: OrderStatus.PENDING,
-                paymentIntentId: createInvoice.result.uuid,
+                paymentIntentId: randomUUID() //createInvoice.result.uuid,
             }
         })
 
@@ -81,17 +87,21 @@ export async function createOrder(data){
         });
 
 
-        await sendEmail(SuggestionEmailTemplate(order, createInvoice.result.link), data.email, 'Оплатите ваш заказ');
+        await sendEmail(SuggestionEmailTemplate(order, `/replaceingPaymentService?invoice_id=${order.paymentIntentId}`/* createInvoice.result.link */), data.email, 'Оплатите ваш заказ');
 
-        return createInvoice.result.link
+        return `/replaceingPaymentService?invoice_id=${order.paymentIntentId}` //createInvoice.result.link
 
     }catch (e){
         console.log('[CreateOrder] Server error', e);
     }
 }
 
-
-export async function registerUser(data){
+interface userData {
+    name: string;
+    email: string;
+    password: string;
+}
+export async function registerUser(data : userData){
 
     const user = await prisma.user.findFirst({
         where: {
@@ -129,16 +139,19 @@ export async function registerUser(data){
     return true;
 }
 
-
-export default async function changePassword(values){
+interface changePasswordData {
+    oldPassword: string;
+    newPassword: string;
+}
+export default async function changePassword(values : changePasswordData){
     try {
         const session = await getServerSession(authOptions);
 
-        if (!session) {
+        if (!session || !session.user || !session.user.id) {
             throw new Error('Unauthorized');
         }
 
-        const user = await prisma.user.findFirst({ where: { id: Number(session?.user.id) } });
+        const user = await prisma.user.findFirst({ where: { id: Number(session.user.id) } });
 
         if (!user) {
             throw new Error('User not found');

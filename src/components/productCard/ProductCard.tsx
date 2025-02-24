@@ -1,10 +1,13 @@
 import Image from "next/image";
 import {CopyPlus} from "lucide-react"
 
+type Ingridient = {
+    name: string
+}
 interface productCard {
     imageSrc: string,
     pizzaName: string,
-    ingridients: string[],
+    ingridients: Ingridient[],
     price:number
 
 }

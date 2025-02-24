@@ -10,10 +10,21 @@ import useFilters from "@/hooks/useFilters";
 import ingridientsAPI from "@/services/ingridientsAPI";
 import SkeletonFilterOptionGroup from "@/components/filterOptionGroup/SkeletonFilterOptionGroup";
 import Link from "next/link";
+import {RootState} from "@/store/store";
+
+
 
 const FilterSidebar = () => {
     const dispatch = useDispatch();
-    const query  = useFilters();
+    const query: {
+        currentToPrice?: number;
+        activeDough?: string[];
+        activeIngridients?: string[];
+        activeSizes?: string[];
+        activeCriteria?: string[];
+        currentFromPrice?: number
+    }  = useFilters();
+
     const {getAllIngridients, loading: loadingIngridients, error: errorIngridients} = ingridientsAPI()
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -28,23 +39,23 @@ const FilterSidebar = () => {
 
     useEffect(() => {
         getAllIngridients()
-            .then(req => dispatch(setIngridients(req.data.map(item=>item.name))))
+            .then(req => req && req.data && dispatch(setIngridients(req.data.map((item: {name: string}) =>item.name))))
     }, []);
 
-    const criteria = useSelector(state => state.filterSidebarReducer.criteria)
-    const ingridients = useSelector(state => state.filterSidebarReducer.ingridients)
-    const dough = useSelector(state => state.filterSidebarReducer.dough)
-    const sizes = useSelector(state => state.filterSidebarReducer.sizes)
+    const criteria = useSelector((state: RootState) => state.filterSidebarReducer.criteria)
+    const ingridients = useSelector((state: RootState) => state.filterSidebarReducer.ingridients)
+    const dough = useSelector((state: RootState) => state.filterSidebarReducer.dough)
+    const sizes = useSelector((state: RootState) => state.filterSidebarReducer.sizes)
 
-    const activeCriteria = useSelector(state => state.filterSidebarReducer.activeCriteria)
-    const activeIngridients = useSelector(state => state.filterSidebarReducer.activeIngridients)
-    const activeDough = useSelector(state => state.filterSidebarReducer.activeDough)
-    const activeSizes = useSelector(state => state.filterSidebarReducer.activeSizes)
+    const activeCriteria = useSelector((state: RootState) => state.filterSidebarReducer.activeCriteria)
+    const activeIngridients = useSelector((state: RootState) => state.filterSidebarReducer.activeIngridients)
+    const activeDough = useSelector((state: RootState) => state.filterSidebarReducer.activeDough)
+    const activeSizes = useSelector((state: RootState) => state.filterSidebarReducer.activeSizes)
 
-    const currentFromPrice = useSelector(state => state.priceFilterReducer.currentFromPrice)
-    const currentToPrice = useSelector(state => state.priceFilterReducer.currentToPrice)
-    const minPrice = useSelector(state => state.priceFilterReducer.minPrice)
-    const maxPrice = useSelector(state => state.priceFilterReducer.maxPrice)
+    const currentFromPrice = useSelector((state: RootState) => state.priceFilterReducer.currentFromPrice)
+    const currentToPrice = useSelector((state: RootState) => state.priceFilterReducer.currentToPrice)
+    const minPrice = useSelector((state: RootState) => state.priceFilterReducer.minPrice)
+    const maxPrice = useSelector((state: RootState) => state.priceFilterReducer.maxPrice)
 
 
 
@@ -72,7 +83,7 @@ const FilterSidebar = () => {
                     <FilterOptionGroup title={"Ингредиенты"} filters={ingridients} setActiveFilter={setActiveIngridients} activeFilters={activeIngridients}/> : null
             }
 
-            <Link href="/" className="text-primary" onClick={() => router.reload()}>Очистить все</Link>
+            <Link href="/" className="text-primary" onClick={() => window.location.reload()}>Очистить все</Link>
         </div>
     )
 }

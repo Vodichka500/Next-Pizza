@@ -1,4 +1,4 @@
-const VerificationCodeTemplate = ({code}) => {
+const VerificationCodeTemplate = ({code} : {code: string | number}) => {
     return (
         <div>
             <p>

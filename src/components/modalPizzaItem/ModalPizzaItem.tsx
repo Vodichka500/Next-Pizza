@@ -4,7 +4,6 @@ import Image from "next/image";
 import clsx from "clsx";
 import {
     clearSelectedIngridients,
-    setDoesNotExistMessage,
     setPrice,
     setSelectedDough,
     setSelectedIngridients,
@@ -19,9 +18,15 @@ import {useDispatch} from "react-redux";
 import {usePostCartItemAPI} from "@/services/cartAPI";
 import {setCartRedux} from "@/components/cart/CartSlice";
 import toast from "react-hot-toast";
+import {AppDispatch} from "@/store/store";
+
+type Variation = {
+    size: number,
+    pizzaType: number
+}
 
 
-const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
+const ModalPizzaItem = ({loadingIngridients, errorIngridients} : {loadingIngridients: boolean, errorIngridients: boolean}) => {
 
     const {
         ingridients,
@@ -36,7 +41,7 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
     const productSizes = [20, 30, 40];
     const productDough = [1, 2];
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
 
 
@@ -44,10 +49,10 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
         adjustSelection(null, null, true);
     }, []);
 
-    const adjustSelection = (size, dough, firstOpen) => {
+    const adjustSelection = (size: number | null, dough: number | null, firstOpen?: boolean) => {
 
         // Проверяем доступность текущего выбора
-        const isValid = product?.productVariations.some(variation =>
+        const isValid = product && product.productVariations && product.productVariations.some((variation: Variation) =>
             variation.size === size && variation.pizzaType === dough)
 
         console.log("Size: ", size, "Dough: ", dough, "SelectedSize: ", selectedSize, "SelectedDough: ", selectedDough, "isValid: ", isValid)
@@ -56,70 +61,69 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
                 dispatch(triggerMessage())
             }
             // Ищем альтернативы для выбранного размера
-            const alternativesForSize = product?.productVariations.filter(variation =>
+            const alternativesForSize = product && product.productVariations && product.productVariations.filter((variation: Variation)  =>
                 variation.size === size
             );
 
-            if (alternativesForSize?.length > 0) {
+            if (alternativesForSize && alternativesForSize.length > 0) {
                 // Переключаем тесто на первый доступный вариант
                 dispatch(setSelectedDough(alternativesForSize[0].pizzaType))
             } else {
                 // Переключаемся на первый доступный вариант
-                const firstAvailable = product?.productVariations[0];
+                const firstAvailable = product && product.productVariations && product.productVariations[0];
                 console.log(firstAvailable)
-                dispatch(setSelectedSize(firstAvailable.size))
-                dispatch(setSelectedDough(firstAvailable.pizzaType))
+                if(firstAvailable && firstAvailable.size) dispatch(setSelectedSize(firstAvailable.size))
+                if(firstAvailable && firstAvailable.pizzaType) dispatch(setSelectedDough(firstAvailable.pizzaType))
 
             }
         }
     };
 
 
-    const handleSizeChange = (size) => {
+    const handleSizeChange = (size: number | null) => {
         dispatch(setSelectedSize(size))
         adjustSelection(size, selectedDough);
     };
 
-    const handleDoughChange = (dough) => {
+    const handleDoughChange = (dough: number | null) => {
         dispatch(setSelectedDough(dough))
         adjustSelection(selectedSize, dough);
     };
 
     useEffect(() => {
-        dispatch(setPrice())
+        dispatch(setPrice(""))
     }, [selectedIngridients, selectedSize, selectedDough]);
 
-    const {postCartItem, loading, error, clearError} = usePostCartItemAPI()
+    const {postCartItem, loading, error} = usePostCartItemAPI()
     const [addedToCart, setAddedToCart] = useState(false)
     const addToCart = () => {
         const data = {
-            productVariationId: product?.productVariations.find(variation =>
+            productVariationId: product?.productVariations.find((variation: {size: number, pizzaType: number} )=>
                 variation.size === selectedSize && variation.pizzaType === selectedDough
             )?.id,
-            ingridients: selectedIngridients.map(ingridient => {return {id: ingridient.id}}),
+            ingridients: selectedIngridients.map((ingridient: {id: number | string}) => {return {id: ingridient.id}}),
             quantity: 1
         }
         postCartItem(data)
             .then(response => {
-                const {data} = response
-                dispatch(setCartRedux(data))
+                if(response && response.data) dispatch(setCartRedux(response.data))
                 setAddedToCart(true)}
             )
             .then(() => toast.success("Добавлено в корзину"))
             .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
-            .finally(() => dispatch(clearSelectedIngridients()))
+            .finally(() => dispatch(clearSelectedIngridients("")))
     }
 
     return (
         <div className="grid grid-cols-2 grid-rows-1 gap-x-4 ">
             <div className="relative w-full flex justify-center items-center">
-                <Image src={product?.imageUrl} alt={"Image of " + product?.name} width={300} height={300}/>
+                {product && product.name && product.imageUrl && <Image src={product.imageUrl} alt={"Image of " + product.name} width={300} height={300}/>}
             </div>
             <div
                 className="relative px-4 rounded-2xl bg-[#F4F1EE]  left-shadow flex flex-col justify-center gap-y-3 py-10">
                 <h2 className="text-2xl font-bold">{product?.name}</h2>
                 <div><b>Размер:</b> {selectedSize}cm, <b>Тесто:</b> {selectedDough === 1 ? "тонкое" : "толстое"}</div>
-                <div><b>Ингридиенты:</b> {product?.ingridients.map(item => item.name).join(", ")}</div>
+                <div><b>Ингридиенты:</b> {product?.ingridients.map((item: {name: string} ) => item.name).join(", ")}</div>
                 <ul
                     className="flex justify-center bg-gray-200 rounded-2xl max-w-sm relative left-1/2 translate-x-[-50%] mt-3">
                     {productSizes.map(size => (
@@ -145,7 +149,7 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
                     <div className="flex flex-wrap justify-center gap-4">
                         {
                             !loadingIngridients && !errorIngridients ?
-                                ingridients.map(ingidient => {
+                                ingridients.map((ingidient: {id: number, name: string, imageUrl: string, price: number}) => {
                                     return (
                                         <div key={ingidient.id}
                                              className={clsx("w-[180px] p-2 bg-white rounded-xl max-w-28 cursor-pointer", selectedIngridients.includes(ingidient) ? "border-primary border-2" : "")}
@@ -165,7 +169,7 @@ const ModalPizzaItem = ({loadingIngridients, errorIngridients}) => {
                 <Button className="max-w-sm relative left-1/2 translate-x-[-50%] mt-6" disabled={addedToCart} onClick={addToCart}>
                     {
                        !loading && !error && !addedToCart && <>Добавить в корзину за {price}<RussianRuble/></> ||
-                        loading && !error && <Spinner/> ||
+                        loading && !error && <Spinner colorHexCode="#FFFFFF"/> ||
                         error && !loading && "Произошла ошибка. Попробуйте позже" ||
                         addedToCart && "Добавлено в корзину"
                     }

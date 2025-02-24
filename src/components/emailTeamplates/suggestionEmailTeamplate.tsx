@@ -1,4 +1,10 @@
-const SuggestionEmailTemplate = (order, link) => {
+type Order = {
+    id: number,
+    fulname: string,
+    totalAmount: number,
+}
+
+const SuggestionEmailTemplate = (order: Order, link: string) => {
     return (
         <div>
             <h1 style={{fontSize: "18px"}}>Здравствуйте, {order.fulname}!</h1>

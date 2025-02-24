@@ -6,22 +6,48 @@ import {selectAll} from "@/components/topBar/topBarSlice";
 import SkeletonMenuSection from "@/components/menuSection/SkeletonMenuSection";
 import {useEffect, useState} from "react";
 import Image from "next/image";
+import {RootState} from "@/store/store";
+
+type Product = {
+    id: number
+    name: string
+    imageUrl: string
+    productVariations: {
+        id: number,
+        price: number,
+        pizzaType?: number,
+        size?: number
+    }[]
+    ingridients: {
+        id: number,
+        name: string
+        price: number
+    }[]
+}
+type Categories = {
+    id: string,
+    name: string,
+    products?: Product[]
+}[]
+
+
 
 const MenuSection = () => {
-    const categories = useSelector(state => selectAll(state))
-    const priceFrom = useSelector(state => state.priceFilterReducer.currentFromPrice)
-    const priceTo = useSelector(state => state.priceFilterReducer.currentToPrice)
+    const categories = useSelector((state: RootState) => selectAll(state))
+    const priceFrom = useSelector((state: RootState) => state.priceFilterReducer.currentFromPrice)
+    const priceTo = useSelector((state: RootState) => state.priceFilterReducer.currentToPrice)
 
-    const sortBy = useSelector(state => state.priceFilterReducer.sortBy)
+    const sortBy = useSelector((state: RootState) => state.priceFilterReducer.sortBy)
 
-    const activeCriteria = useSelector(state => state.filterSidebarReducer.activeCriteria)
-    const activeIngridients = useSelector(state => state.filterSidebarReducer.activeIngridients)
-    const activeDough = useSelector(state => state.filterSidebarReducer.activeDough)
-    const activeSizes = useSelector(state => state.filterSidebarReducer.activeSizes)
+    const activeCriteria = useSelector((state: RootState) => state.filterSidebarReducer.activeCriteria)
+    const activeIngridients = useSelector((state: RootState) => state.filterSidebarReducer.activeIngridients)
+    const activeDough = useSelector((state: RootState) => state.filterSidebarReducer.activeDough)
+    const activeSizes = useSelector((state: RootState) => state.filterSidebarReducer.activeSizes)
 
     const [sortedCategories, setSortedCategories] = useState(categories || [])
 
-    const sortByPrice = (a, b) => {
+
+    const sortByPrice = (a: Product, b: Product) => {
         const priceA = a.productVariations[0].price;
         const priceB = b.productVariations[0].price;
 
@@ -32,11 +58,11 @@ const MenuSection = () => {
         }
         return 0;
     };
-    const applyFilters = (categories) => {
+    const applyFilters = (categories: Categories) => {
         const filteredCategory = categories
             .map(category => ({
                 ...category,
-                products: category.products.filter(product =>{
+                products: category.products ? category.products.filter(product =>{
                         const productPrice = product.productVariations[0].price;
                         // Фильтруем по priceFrom и priceTo, если они существуют
                         const priceCondition =
@@ -62,7 +88,7 @@ const MenuSection = () => {
 
                         return priceCondition && criteriaCondition && ingridientsCondition && doughCondition && sizeCondition;
                     }
-                ).sort(sortByPrice)
+                ).sort(sortByPrice) : []
             }))
             .filter(category => category.products.length > 0); // исключаем категории без отфильтрованных продуктов
         return filteredCategory

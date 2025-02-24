@@ -5,43 +5,55 @@ import {ArrowUpDown, MoveDown, MoveUp} from "lucide-react";
 import {Container} from "@/components/container/Container";
 import {setActiveSection, setAllSections, selectAll} from "@/components/topBar/topBarSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import {useCategoryAPI} from "@/services/categoryAPI";
-import Spinner from "@/components/spinner/Spinner";
 import SkeletonTopBar from "@/components/topBar/SkeletonTopBar";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {setSortBy} from "@/components/priceFilter/priceFilterSlice";
+import {RootState} from "@/store/store";
+type Product = {
+    productVariations: {id: number, price: number, pizzaType?: number, size?: number}[]
+    ingridients: {id: number, name: string}[]
+}
 
+interface Category {
+    id: string;
+    name: string;
+    products?: Product[]
+}
 
 const TopBar = () => {
     const dispatch = useDispatch()
     const {getAllCategory, loading, error} = useCategoryAPI()
-    const categories = useSelector(state => selectAll(state))
+    const categories: Category[] = useSelector((state: RootState) => selectAll(state))
     useEffect(() => {
         if(categories.length === 0){
-            getAllCategory().then(res => dispatch(setAllSections(res.data)))
+            getAllCategory().then(res => {
+                if(res && res.data) {
+                    const formattedData: Category[] = res.data.map((item: Category) => ({
+                        id: item.id,
+                        name: item.name,
+                        products: item.products
+                    }));
+                    dispatch(setAllSections(formattedData))
+                }
+            })
         }
     }, [])
 
-    const onClick = (event, id) => {
+    const onClick = (event: React.MouseEvent, id: string) => {
         event.preventDefault(); // предотвращаем стандартную прокрутку
         const target = document.getElementById(id);
 
         if (target) {
-            const offset = 100; // отступ от верха, например, 20px
+            const offset = 80; // отступ от верха, например, 20px
             const elementPosition = target.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -49,28 +61,27 @@ const TopBar = () => {
                 top: offsetPosition,
                 behavior: "smooth"
             });
-
             dispatch(setActiveSection(id));
         }
     }
 
     //const categories = useSelector(state => selectAll(state))
-    const activeSection = useSelector(state => state.topBarReducer.activeSection)
+    const activeSection = String(useSelector((state: RootState) => state.topBarReducer.activeSection))
 
-    const setContent = (loading, error) => {
+    const setContent = (loading: boolean, error: boolean) => {
         if(loading){
             return <SkeletonTopBar/>
         }else if(error){
             return <div>Error</div>
         }else if(!error && !loading){
             return (
-                categories.map((item, i) => {
+                categories.map((item: Category, i) => {
                     return(
                         <a
                             key={i}
                             href={`#${item.id}`}
                             onClick={(e) => onClick(e, item.id)}
-                            className={clsx("flex items-center font-bold h-11 rounded-2xl px-5", item.id === activeSection && 'bg-white shadow-md shadow-gray-200 text-primary')}>
+                            className={clsx("flex items-center font-bold h-11 rounded-2xl px-5", String(item.id) === activeSection && 'bg-white shadow-md shadow-gray-200 text-primary')}>
                             <button>{item.name}</button>
                         </a>
                     )
@@ -80,7 +91,7 @@ const TopBar = () => {
         }
     }
 
-    const sortBy = useSelector(state => state.priceFilterReducer.sortBy)
+    const sortBy = useSelector((state: RootState) => state.priceFilterReducer.sortBy)
 
 
     return(

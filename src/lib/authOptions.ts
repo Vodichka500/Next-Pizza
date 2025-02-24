@@ -3,22 +3,25 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import {prisma} from "../../prisma/prisma-client";
 import {compare, hashSync} from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
+import {NextAuthOptions} from "next-auth";
 
-export const authOptions = {
+
+export const authOptions: NextAuthOptions = {
     // Configure one or more authentication providers
     providers: [
         GithubProvider({
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_SECRET,
+            clientId: process.env.GITHUB_CLIENT_ID ?? "",
+            clientSecret: process.env.GITHUB_SECRET ?? "",
         }),
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_SECRET,
+            clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+            clientSecret: process.env.GOOGLE_SECRET ?? "",
         }),
         CredentialsProvider({
             name: "Credentials",
             credentials: {
                 username: { label: "Username", type: "text", placeholder: "jsmith" },
+                email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
@@ -27,7 +30,7 @@ export const authOptions = {
                 }
 
                 const values = {
-                    email: credentials.email,
+                    email: credentials.email ?? "",
                 };
 
                 const findUser = await prisma.user.findFirst({
@@ -49,9 +52,9 @@ export const authOptions = {
                 // }
 
                 return {
-                    id: findUser.id,
+                    id: findUser.id.toString(),
                     email: findUser.email,
-                    name: findUser.fullName,
+                    name: findUser.fullname,
                     role: findUser.role,
                 };
             }
@@ -65,6 +68,7 @@ export const authOptions = {
                 return token;
             }
 
+
             const findUser = await prisma.user.findFirst({
                 where: {
                     email: token.email,
@@ -74,16 +78,18 @@ export const authOptions = {
             if (findUser) {
                 token.id = String(findUser.id);
                 token.email = findUser.email;
-                token.fullName = findUser.fullName;
+                token.fullName = findUser.fullname;
                 token.role = findUser.role;
             }
+
+
 
             return token;
         },
         session({ session, token }) {
             if (session?.user) {
-                session.user.id = token.id;
-                session.user.role = token.role;
+                session.user.id = String(token.id);
+                session.user.role = String(token.role);
             }
 
             return session;

@@ -1,6 +1,15 @@
 import { useSearchParams } from "next/navigation";
 import qs from "qs";
 
+interface CurrentPrices {
+    currentFromPrice?: number;
+    currentToPrice?: number;
+}
+
+const isCurrentPrices = (obj: unknown): obj is CurrentPrices =>
+    typeof obj === 'object' && obj !== null && ('currentFromPrice' in obj || 'currentToPrice' in obj);
+
+
 const useFilters = () => {
     const searchParams = useSearchParams();
 
@@ -9,13 +18,13 @@ const useFilters = () => {
     const query = qs.parse(queryString, { ignoreQueryPrefix: true });
 
     // Извлекаем данные
-    const activeCriteria = query.activeCriteria?.split(',');
-    const activeDough = query.activeDough?.split(',');
-    const activeIngridients = query.activeIngridients?.split(',');
-    const activeSizes = query.activeSizes?.split(',');
+    const activeCriteria = typeof query.activeCriteria === 'string' ? query.activeCriteria?.split(',') : [];
+    const activeDough = typeof query.activeDough  === 'string' ? query.activeDough?.split(',') : [];
+    const activeIngridients =  typeof query.activeIngridients  === 'string' ? query.activeIngridients?.split(',') : [];
+    const activeSizes =  typeof query.activeSizes  === 'string' ? query.activeSizes?.split(',') : [];
 
-    const currentFromPrice = query.currentPrices?.currentFromPrice || null;
-    const currentToPrice = query.currentPrices?.currentToPrice || null;
+    const currentFromPrice = isCurrentPrices(query.currentPrices) ? query.currentPrices.currentFromPrice : undefined;
+    const currentToPrice = isCurrentPrices(query.currentPrices) ? query.currentPrices?.currentToPrice : undefined;
 
     return { activeCriteria, activeDough, activeIngridients, activeSizes, currentFromPrice, currentToPrice };
 };

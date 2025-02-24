@@ -4,23 +4,30 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {X} from 'lucide-react'
 import ReactStories from "react-insta-stories"
-import {black} from "next/dist/lib/picocolors";
+
+interface Story {
+    id: string | number;
+    previewImageUrl: string;
+    items: {id: string | number; sourceUrl: string}[];
+}
 
 const Stories = () => {
     const [stories, setStories] = useState([])
     const [open, setOpen] = useState(false);
-    const [selectedStory, setSelectedStory] = useState();
+    const [selectedStory, setSelectedStory] = useState<Story>({id: "", previewImageUrl: "", items: []});
 
     useEffect(() => {
         axios.get("/api/stories",{})
             .then(res => setStories(res.data))
     }, []);
 
-    const onClickStory = (story) => {
-        setSelectedStory(story);
+    const onClickStory = (story: Story) => {
+        if(!open){
+            setSelectedStory(story);
 
-        if (story.items.length > 0) {
-            setOpen(true);
+            if (story.items.length > 0) {
+                setOpen(true);
+            }
         }
     };
 
@@ -31,7 +38,7 @@ const Stories = () => {
                     <div key={index} className="w-[200px] h-[250px] bg-gray-200 rounded-md animate-pulse" />
                 ))}
 
-            {stories.map((story) => (
+            {stories.map((story: Story) => (
                 <img
                     key={story.id}
                     onClick={() => onClickStory(story)}

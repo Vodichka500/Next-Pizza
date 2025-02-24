@@ -1,16 +1,17 @@
 import {useSelector} from "react-redux";
+import {RootState} from "@/store/store";
 
 export const useChooseModalProduct = () => {
 
-    const product = useSelector(state => state.chooseModalProductReducer.product)
-    const loadingProduct = useSelector(state => state.chooseModalProductReducer.loadingProduct)
-    const errorProduct = useSelector(state => state.chooseModalProductReducer.errorProduct)
-    const ingridients = useSelector(state => state.chooseModalProductReducer.ingidients)
-    const selectedSize = useSelector(state => state.chooseModalProductReducer.selectedSize)
-    const selectedDough = useSelector(state => state.chooseModalProductReducer.selectedDough)
-    const doesNotExistMessage = useSelector(state => state.chooseModalProductReducer.doesNotExistMessage)
-    const selectedIngridients = useSelector(state => state.chooseModalProductReducer.selectedIngridients)
-    const price = useSelector(state => state.chooseModalProductReducer.price)
+    const product = useSelector((state: RootState) => state.chooseModalProductReducer.product)
+    const loadingProduct = useSelector((state: RootState) => state.chooseModalProductReducer.loadingProduct)
+    const errorProduct = useSelector((state: RootState) => state.chooseModalProductReducer.errorProduct)
+    const ingridients = useSelector((state: RootState) => state.chooseModalProductReducer.ingidients)
+    const selectedSize = useSelector((state: RootState) => state.chooseModalProductReducer.selectedSize)
+    const selectedDough = useSelector((state: RootState) => state.chooseModalProductReducer.selectedDough)
+    const doesNotExistMessage = useSelector((state: RootState) => state.chooseModalProductReducer.doesNotExistMessage)
+    const selectedIngridients = useSelector((state: RootState) => state.chooseModalProductReducer.selectedIngridients)
+    const price = useSelector((state: RootState) =>  state.chooseModalProductReducer.price)
 
 
 

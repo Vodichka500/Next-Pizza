@@ -7,12 +7,11 @@ import {Button} from "@/components/ui/button";
 import {Github} from "lucide-react";
 import Image from "next/image";
 import registrationValidationScheme from "@/components/auth/registrationValidationScheme";
-import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {registerUser} from "@/app/actions";
 import toast from "react-hot-toast";
 
-const RegistrationForm = ({isModal, setIsOpen}) => {
+const RegistrationForm = ({isModal, setIsOpen} : {isModal?: boolean, setIsOpen?: (isOpen: boolean) => void}) => {
     const router = useRouter();
 
     const formik = useFormik({
@@ -32,7 +31,7 @@ const RegistrationForm = ({isModal, setIsOpen}) => {
                 toast.error("Пользователь с таким email уже существует");
             }
 
-            if (isModal){
+            if (isModal && setIsOpen){
                 setIsOpen(false);
             }
             console.log(res);

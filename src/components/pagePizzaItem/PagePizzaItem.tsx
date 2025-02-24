@@ -18,42 +18,42 @@ import {useDispatch} from "react-redux";
 import {setCartRedux} from "@/components/cart/CartSlice";
 import {usePostCartItemAPI} from "@/services/cartAPI";
 import toast from "react-hot-toast";
+import {AppDispatch} from "@/store/store";
 
 
 
-const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
+const PagePizzaItem = ({loadingIngridients, errorIngridients} : {loadingIngridients: boolean, errorIngridients: boolean}) => {
     const {ingridients, product, doesNotExistMessage, selectedIngridients, selectedDough, selectedSize, price} = useChooseModalProduct()
     const productSizes = [20,30,40];
     const productDough = [1,2];
 
-    const dispatch = useDispatch() // Не вынести случайно за пределы компонента
+    const dispatch = useDispatch<AppDispatch>() // Не вынести случайно за пределы компонента
 
-    const {postCartItem, loading, error, clearError} = usePostCartItemAPI()
+    const {postCartItem, loading, error} = usePostCartItemAPI()
     const [addedToCart, setAddedToCart] = useState(false)
     const addProductToCart = () => {
         const data = {
             quantity: 1,
-            productVariationId: product.productVariations[0].id
+            productVariationId: product?.productVariations?.[0]?.id ?? null
         }
         postCartItem(data)
             .then(response => {
-                const {data} = response
-                dispatch(setCartRedux(data))
+                if (response && response.data) dispatch(setCartRedux(data))
                 setAddedToCart(true)}
             )
             .then(() => toast.success("Добавлено в корзину"))
             .catch(e => {console.error(e);toast.error('Произошла ошибка. Попробуйте позже')})
-            .finally(() => dispatch(clearSelectedIngridients()))
+            .finally(() => dispatch(clearSelectedIngridients("")))
     }
 
     useEffect(() => {
         adjustSelection(null, null)
     }, []);
 
-    const adjustSelection = (size, dough) => {
+    const adjustSelection = (size: number | null, dough: number | null) => {
 
         // Проверяем доступность текущего выбора
-        const isValid = product?.productVariations.some(variation =>
+        const isValid = product?.productVariations.some((variation: {size: number; pizzaType: number}) =>
             variation.size === size && variation.pizzaType === dough
         );
 
@@ -62,49 +62,49 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
                 dispatch(triggerMessage())
             }
             // Ищем альтернативы для выбранного размера
-            const alternativesForSize = product?.productVariations.filter(variation =>
+            const alternativesForSize = product?.productVariations.filter((variation: {size: number | null}) =>
                 variation.size === size
             );
 
-            if (alternativesForSize?.length > 0) {
+            if (alternativesForSize && alternativesForSize?.length > 0) {
                 // Переключаем тесто на первый доступный вариант
                 dispatch(setSelectedDough(alternativesForSize[0].pizzaType))
             } else {
                 // Переключаемся на первый доступный вариант
-                const firstAvailable = product?.productVariations[0];
+                const firstAvailable = product?.productVariations?.[0];
                 console.log(firstAvailable)
-                dispatch(setSelectedSize(firstAvailable.size))
-                dispatch(setSelectedDough(firstAvailable.pizzaType))
+                dispatch(setSelectedSize(firstAvailable?.size))
+                dispatch(setSelectedDough(firstAvailable?.pizzaType))
 
             }
         }
     };
 
 
-    const handleSizeChange = (size) => {
+    const handleSizeChange = (size: number | null) => {
         dispatch(setSelectedSize(size))
         adjustSelection(size, selectedDough);
     };
 
-    const handleDoughChange = (dough) => {
+    const handleDoughChange = (dough: number | null) => {
         dispatch(setSelectedDough(dough))
         adjustSelection(selectedSize, dough);
     };
 
     useEffect(() => {
-        dispatch(setPrice())
+        dispatch(setPrice(""))
     }, [selectedIngridients, selectedSize, selectedDough]);
 
-    console.log(`Product ready? --> ${product.id}`)
+
     return (
         <div className="relative grid grid-cols-2 grid-rows-1 gap-x-4 mt-10">
             <div className="relative w-full flex justify-center items-center px-4 rounded-2xl bg-[#FFF7EE] left-shadow flex-col">
-                <Image src={product?.imageUrl} alt={"Image of " + product?.name} width={1000} height={1000} className="w-4/5"/>
+                {product && product.name && product.imageUrl &&  <Image src={product?.imageUrl} alt={"Image of " + product?.name} width={1000} height={1000} className="w-4/5"/>}
             </div>
             <div className="relative px-4 flex flex-col justify-center ">
                 <h2 className="text-3xl font-bold">{product?.name}</h2>
                 <div className="mt-3"><b>Размер:</b> {selectedSize}cm, <b>Тесто:</b> {selectedDough === 1 ? "тонкое" : "толстое"}</div>
-                <div><b>Ингридиенты:</b> {product?.ingridients.map(item => item.name).join(", ")}</div>
+                <div><b>Ингридиенты:</b> {product?.ingridients.map((item: {name: string}) => item.name).join(", ")}</div>
                 <ul
                     className="flex justify-center bg-gray-200 rounded-2xl max-w-sm relative left-1/2 translate-x-[-50%] mt-5">
                     {productSizes.map(size => (
@@ -130,7 +130,7 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
                     <div className="flex flex-wrap justify-center gap-4">
                         {
                             !loadingIngridients && !errorIngridients ?
-                                ingridients.map(ingidient => {
+                                ingridients.map((ingidient: {id: number; imageUrl: string; name: string; price: number }) => {
                                     return (
                                         <div key={ingidient.id}
                                              className={clsx("w-[180px] p-2 bg-white rounded-xl max-w-28 cursor-pointer", selectedIngridients.includes(ingidient) ? "border-primary border-2" : "")}
@@ -143,7 +143,7 @@ const PagePizzaItem = ({loadingIngridients, errorIngridients}) => {
                                                 className="inline  max-w-[15px]"/></div>
                                         </div>
                                     )
-                                }) : <Spinner/>
+                                }) : <Spinner colorHexCode="#FFFFFF"/>
                         }
                     </div>
                 </div>

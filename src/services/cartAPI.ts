@@ -1,5 +1,6 @@
 import {BASE_URL, CART_ITEM_PATH, CART_ITEMS_PATH, CART_PATH} from "@/services/constants";
 import {useAxiosDelete, useAxiosGet, useAxiosPatch, useAxiosPost} from "@/hooks/useAxios";
+import {AxiosRequestConfig} from "axios";
 
 export const useGetCartAPI = () => {
     const {request, loading, error}  =useAxiosGet()
@@ -13,7 +14,7 @@ export const useGetCartAPI = () => {
 export const usePatchCartAPI = () => {
     const {request, loading, error, clearError} = useAxiosPatch()
 
-    const patchCart = async (changes) => {
+    const patchCart = async (changes: AxiosRequestConfig) => {
         const response = request(BASE_URL+CART_PATH, changes)
         return response
     }
@@ -24,7 +25,7 @@ export const usePatchCartAPI = () => {
 export const usePatchCartItemAPI = () => {
     const {request, loading, error, clearError} = useAxiosPatch()
 
-    const patchCartItem = async (id,changes) => {
+    const patchCartItem = async (id: number | string ,changes: { quantity: number }) => {
         //console.log("usePatchCartItemAPI: ", id, changes, BASE_URL+CART_ITEM_PATH+id)
         const response = request(BASE_URL+CART_ITEM_PATH+id, changes)
         return response
@@ -36,7 +37,7 @@ export const usePatchCartItemAPI = () => {
 export const usePostCartItemAPI = () => {
     const {request, loading, error, clearError} = useAxiosPost()
 
-    const postCartItem = async (data) => {
+    const postCartItem = async (data: object) => {
         //console.log("usePostCartItemAPI: ", data)
         const response = request(BASE_URL+CART_ITEMS_PATH, data)
         return response
@@ -48,7 +49,7 @@ export const usePostCartItemAPI = () => {
 export const useDeleteCartItemAPI = () => {
     const {request, loading, error, clearError} = useAxiosDelete()
 
-    const deleteCartItem = async (id) => {
+    const deleteCartItem = async (id: string | number) => {
         //console.log("useDeleteCartItemAPI: ", id)
         const response = request(BASE_URL+CART_ITEM_PATH+id, {})
         return response

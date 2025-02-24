@@ -1,24 +1,34 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "../../../../prisma/prisma-client";
-import {OrderStatus, Prisma} from "@prisma/client";
-import SuggestionEmailTemplate from "@/components/emailTeamplates/suggestionEmailTeamplate";
+import {OrderStatus} from "@prisma/client";
+//import SuggestionEmailTemplate from "@/components/emailTeamplates/suggestionEmailTeamplate";
 import {sendEmail} from "@/lib/send-email";
 import SuccessEmailTemplate from "@/components/emailTeamplates/successEmailTemplate";
 import CanceledEmailTemplate from "@/components/emailTeamplates/canceledEmailTemplate";
 
 export async function POST(req: NextRequest){
-    console.log(typeof req)
-    console.log(req)
+    //Original solution
 
-    const rawBody = await req.text();
-    const body = new URLSearchParams(rawBody);
-    const bodyObject = Object.fromEntries(body.entries());
+    // console.log(typeof req)
+    // console.log(req)
+    //
+    // const rawBody = await req.text();
+    // const body = new URLSearchParams(rawBody);
+    // const bodyObject = Object.fromEntries(body.entries());
+    //
+    // console.log("Parsed body:", bodyObject);
+    // const invoice_id = "INV-" + bodyObject.invoice_id;
+    // const resStatus = bodyObject.status;
+    //
 
-    console.log("Parsed body:", bodyObject);
-    const invoice_id = "INV-" + bodyObject.invoice_id;
-    const resStatus = bodyObject.status;
+    // It's temporary solution, because I can't get data from payment service
+    const body = await req.json();
+    const invoice_id = "INV-" + body.invoice_id;
+    const resStatus = body.status;
+    //end of temporary solution
 
     let status
+
     if(resStatus !== "success"){
         status = OrderStatus.CANCELLED
     }else {

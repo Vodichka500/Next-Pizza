@@ -10,7 +10,7 @@ import loginValidationScheme from "@/components/auth/loginValidationScheme";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 
-const LoginForm = ({isModal, setIsOpen}) => {
+const LoginForm = ({isModal, setIsOpen}: {isModal: boolean, setIsOpen?: (isOpen: boolean) => void}) => {
     const [loginError, setLoginError] = useState("");
     const router = useRouter();
 
@@ -26,10 +26,10 @@ const LoginForm = ({isModal, setIsOpen}) => {
                 ...values,
                 redirect: false,
             });
-            if (res?.error) setLoginError("Неверный email или пароль");
-            if (!res.error){
+            if (res && res?.error) setLoginError("Неверный email или пароль");
+            if (res && !res.error){
                 router.push('/?loginSuccessful');
-                if (isModal){
+                if (isModal && setIsOpen){
                     setIsOpen(false);
                 }
             }
