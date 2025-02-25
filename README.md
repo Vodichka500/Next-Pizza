@@ -1,11 +1,11 @@
 
-# Next-Pizza 🍕 / Fullstack web-application
+# Next-Pizza 🍕 / Full-stack Pizza Ordering Web Application
 
 Next-Pizza is a modern and fully-featured pizza ordering platform. It allows users to browse a variety of pizzas and products, customize orders, and securely complete purchases. Built with **Next.js**, **Tailwind CSS**, and **Redux**, it offers smooth navigation, authentication, and seamless payment processing.
 
-[![Project Status](https://img.shields.io/badge/status-completed-brightgreen.svg)](https://github.com/yourusername/next-pizza)
+[![Project Status](https://img.shields.io/badge/status-completed-brightgreen.svg)](https://github.com/Vodichka500/next-pizza)
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://your-deployed-app-link.com)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://next-pizza-taupe-ten.vercel.app)
 
 
 
@@ -24,14 +24,14 @@ Next-Pizza is a modern and fully-featured pizza ordering platform. It allows use
 
 🔗 Live Demo: [Next-Pizza Deployment](https://next-pizza-taupe-ten.vercel.app)
 
-Account data of the test user:  
+Test Account Credentials
 Login: *u.kamisarau@gmail.com*  
 Password: *password*
 
 Or check the GIF demonstrating basic features and see [screenshots](#screenshots) at the end of the README.
 
 
-------------------------------Insert gif or link to demo ---------------------
+![0225 (3)](https://github.com/user-attachments/assets/cf24a736-b560-49be-b63c-1ec6d860451b)
 
 
 ## Features
@@ -42,7 +42,7 @@ Or check the GIF demonstrating basic features and see [screenshots](#screenshots
 ✔️ Customize your order (size, toppings, etc.)  
 ✔️ Smooth navigation and state management with Redux  
 ✔️ Payment Integration via Crypto Cloud  
-✔️ Authentication in the Application (including authentication via Google and GitHub)  
+✔️ Secure Authentication (Google, GitHub, Email/Password)  
 ✔️ And much more...
 ## Tech Stack
 
@@ -51,7 +51,7 @@ Or check the GIF demonstrating basic features and see [screenshots](#screenshots
 
 **Server:** Node.js, Prisma, NextAuth.js
 
-**Database:** PostgreSQL
+**Database:** PostgreSQL (via Prisma ORM)
 
 **Deployment:** Vercel
 
@@ -87,7 +87,7 @@ POSTGRES_USER=
 POSTGRES_HOST=
 POSTGRES_PASSWORD=
 POSTGRES_DATABASE=
-POSTGRES_URL_NO_SSL=p
+POSTGRES_URL_NO_SSL=
 POSTGRES_PRISMA_URL=
 
 DADATA_API_KEY=""
@@ -102,6 +102,7 @@ GOOGLE_SECRET=""
 
 NEXT_AUTH_SECRET=""
 ```
+*Ensure that all required environment variables are set before running the application.*
 
 **Apply database migrations**
 ```bash
@@ -122,9 +123,15 @@ npm start
 ```
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![image](https://github.com/user-attachments/assets/0f180c81-98f5-4039-be97-eafce0197fcd)
+<br/>
+![image](https://github.com/user-attachments/assets/5cc65586-b963-4ccc-b877-f99b9ca6aba7)  
+![image](https://github.com/user-attachments/assets/4cc221da-47b0-46ff-b4c3-ba0ddbf40699)  
+![image](https://github.com/user-attachments/assets/5046b7d2-2610-423f-91e3-8299dcaf0b49)  
+![image](https://github.com/user-attachments/assets/95bb17bb-2748-4672-bc3d-f65588304761)  
+![image](https://github.com/user-attachments/assets/a38f3d6d-af7f-470d-a362-61a115b86d05)  
+
 
 
 ## License
-This project is open-source and available under the
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is open-source and available under the [MIT](https://choosealicense.com/licenses/mit/)
