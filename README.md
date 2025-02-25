@@ -13,6 +13,7 @@ Next-Pizza is a modern and fully-featured pizza ordering platform. It allows use
 ## Table of Contents
 * [Live Demo](#live-demo)
 * [Features](#features)
+* [Featured Features](#featured-features)
 * [Tech Stack](#tech-stack)
 * [Installation](#installation)
 * [Usage](#usage)
@@ -44,6 +45,10 @@ Or check the GIF demonstrating basic features and see [screenshots](#screenshots
 ✔️ Payment Integration via Crypto Cloud  
 ✔️ Secure Authentication (Google, GitHub, Email/Password)  
 ✔️ And much more...
+
+## Featured Features
+* Responsive Design
+
 ## Tech Stack
 
 
