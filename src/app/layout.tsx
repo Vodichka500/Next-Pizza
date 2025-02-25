@@ -9,8 +9,8 @@ import NextTopLoader from "nextjs-toploader";
 import React, {Suspense} from "react";
 import type {ReactNode} from "react";
 import LoadingPage from "@/components/loadingPage/LoadingPage";
-
-
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const nutino = Nunito({
@@ -37,6 +37,8 @@ export default function RootLayout({children, /*session*/}: LayoutProps) {
                     <NextTopLoader color="#ff7c2c" showSpinner={false}/>
                     <Toaster/>
                     {children}
+                    <Analytics/>
+                    <SpeedInsights/>
                 </StoreProvider>
             </Suspense>
         </SessionProvider>
